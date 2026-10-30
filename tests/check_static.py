@@ -1,8 +1,9 @@
 """Static checks for the mod in Build/:
 - XML is well-formed
 - Lua parses, and uses nothing newer than Lua 5.1 (the game's Lua): no goto, no //, no table.unpack
-- every l10n key used in Lua exists in modDesc.xml, with en and da
-- en and da texts have the same format placeholders (%d, %s) in the same order
+- every l10n key used in Lua exists in translations/l10n_en.xml, _de.xml and _da.xml
+- all languages have the same placeholders (%d, %s) in the same order, and start with a capital
+- title and description in modDesc in every language; German description not a copy of English
 
 Usage: python tests/check_static.py [mod_dir]      (default: Build)
 Needs: pip install luaparser
@@ -31,30 +32,50 @@ for f in glob.glob(root + "/**/*.xml", recursive=True):
         fail("XML FAIL", f, e)
 
 desc = ET.parse(root + "/modDesc.xml").getroot()
-texts = {t.get("name"): t for t in desc.iter("text")}
 # Base game keys the mod uses
 BASE_KEYS = {"button_ok"}
 # Key prefixes built at runtime: prefix + value
 PREFIXES = ("crp_month_", "crp_action_", "crp_display_", "crp_position_")
 
 # ModHub: every UI text needs at least EN and DE (guideline 8.2); we also ship DA.
+# Texts are in <prefix>_<lang>.xml (modDesc <l10n filenamePrefix>); every file has the same keys.
 # Texts must start with a capital letter (guideline 5.5); a placeholder or "+"/"\"" start is fine.
 LANGUAGES = ("en", "de", "da")
+l10n = desc.find("l10n")
+prefix = l10n.get("filenamePrefix") if l10n is not None else None
+if prefix is None:
+    fail("modDesc has no <l10n filenamePrefix>")
+    prefix = "translations/l10n"
+tables = {}
+for lang in LANGUAGES:
+    path = f"{root}/{prefix}_{lang}.xml"
+    try:
+        tables[lang] = {t.get("name"): t.get("text") for t in ET.parse(path).getroot().iter("text")}
+    except Exception as e:
+        fail("MISSING translation file", path, e)
+        tables[lang] = {}
+texts = tables["en"]
+
 placeholder = re.compile(r"%[ds]")
-for name, t in texts.items():
-    values = {lang: t.find(lang) for lang in LANGUAGES}
-    missing = [lang for lang, v in values.items() if v is None or not (v.text or "").strip()]
-    if missing:
-        fail("MISSING", "/".join(missing), "for l10n", name)
-        continue
-    en_ph = placeholder.findall(values["en"].text)
-    for lang in ("de", "da"):
-        if placeholder.findall(values[lang].text) != en_ph:
-            fail("PLACEHOLDERS differ en/" + lang, name, en_ph, placeholder.findall(values[lang].text))
-    for lang, v in values.items():
-        first = v.text.lstrip()[:1]
+for lang in ("de", "da"):
+    for name in sorted(set(texts) - set(tables[lang])):
+        fail("MISSING", lang, "for l10n", name)
+    for name in sorted(set(tables[lang]) - set(texts)):
+        fail("EXTRA key only in", lang, name)
+for name, en in texts.items():
+    en_ph = placeholder.findall(en or "")
+    for lang in LANGUAGES:
+        value = tables[lang].get(name)
+        if value is None:
+            continue
+        if not value.strip():
+            fail("EMPTY", lang, name)
+            continue
+        if placeholder.findall(value) != en_ph:
+            fail("PLACEHOLDERS differ en/" + lang, name, en_ph, placeholder.findall(value))
+        first = value.lstrip()[:1]
         if first.isalpha() and first != first.upper():
-            fail("LOWER-CASE START", lang, name, v.text[:40])
+            fail("LOWER-CASE START", lang, name, value[:40])
 
 for part in ("title", "description"):
     element = desc.find(part)

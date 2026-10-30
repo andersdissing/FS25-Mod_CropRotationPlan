@@ -25,7 +25,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUILD = os.path.join(ROOT, "Build")
 
 desc = ET.parse(os.path.join(BUILD, "modDesc.xml")).getroot()
-texts = {t.get("name"): t.find("en").text for t in desc.iter("text")}
+l10n_prefix = desc.find("l10n").get("filenamePrefix")
+texts = {t.get("name"): t.get("text") for t in ET.parse(os.path.join(BUILD, l10n_prefix + "_en.xml")).getroot().iter("text")}
 texts["button_ok"] = "OK"
 frame_ids = re.findall(r'\bid="([A-Za-z]+)"', open(os.path.join(BUILD, "gui/CropRotationPlanFrame.xml"), encoding="utf-8").read())
 

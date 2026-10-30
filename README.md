@@ -169,11 +169,21 @@ Build/          the mod as it ships (zip the contents, not the folder)
   scripts/CropRotationPlanPages.lua   Plans, plan editor and Field groups pages
   scripts/CropRotationPlanFrame.lua   the Esc menu tab
   gui/CropRotationPlanFrame.xml       tab layout (header, sub-tabs, Settings rows)
+  translations/l10n_en.xml, _de.xml, _da.xml   all texts, one file per language
 Docs/           screenshots, PUBLISHING.md (ModHub checklist), v1.1/ (old v1.1 copy, reference only)
 tests/          check_static.py, test_logic.py, smoke_test.py
 tools/          deploy.ps1 (local test), release.ps1 (GitHub release)
 HANDOFF.md      design decisions, verified facts and pitfalls, status
 ```
+
+### Translations
+
+All texts are in `Build/translations/l10n_<language>.xml` (English, German, Danish today).
+To add a language, copy `l10n_en.xml` to `l10n_<code>.xml` with the game's language code (e.g. `fr`, `nl`, `pl`)
+and translate the `text=` values; keep the `name=` keys and every `%d` / `%s` in the same order.
+The mod's title and description are in `Build/modDesc.xml` (one `<code>` element per language);
+a translated description must not be a copy of the English one (ModHub rule).
+`python tests/check_static.py Build` checks that every language has every key with the same placeholders.
 
 ### Checks and tests
 
