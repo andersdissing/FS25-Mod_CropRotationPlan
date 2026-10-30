@@ -3,7 +3,9 @@
      Layout follows the base game / Courseplay / AdvancedDamageSystem sub-category pages:
      header, sub-tab bar (Settings, Plans, Field groups), one container per sub-tab.
      Row background colours are set in Lua (CropRotationPlanFrame:updateRowColors), like the
-     base game settings page does; without that the rows render white. -->
+     base game settings page does; without that the rows render white.
+     The Plans and Field groups containers are empty: those pages are drawn by
+     CropRotationPlanFrame:draw (CropRotationPlanPages.lua) inside the container's area. -->
 <GUI name="cropRotationPlan">
     <GuiElement profile="fs25_menuContainer" name="cropRotationPlan">
         <GuiElement profile="fs25_menuHeaderPanel">
@@ -27,18 +29,9 @@
         <ThreePartBitmap profile="fs25_lineSeparatorTopHighlighted" position="0px -57px"/>
         <MultiTextOption profile="fs25_subCategorySelectorTabbed" id="subCategoryPaging" position="0px -10px" onClick="updateSubCategoryPages"/>
 
-        <!-- Sub-tab 1: Settings -->
+        <!-- Sub-tab 1: Settings (mockup 1) -->
         <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPageSettings">
             <ScrollingLayout profile="fs25_settingsLayout" id="settingsLayout" bottomClipperElementName="bottomClipper">
-
-                <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="sectionPlan"/>
-
-                <Bitmap profile="fs25_multiTextOptionContainer">
-                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="startYearOption" onClick="onClickStartYear">
-                        <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="startYearTooltip"/>
-                    </MultiTextOption>
-                    <Text profile="fs25_settingsMultiTextOptionTitle" id="startYearTitle"/>
-                </Bitmap>
 
                 <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="sectionDisplay"/>
 
@@ -56,15 +49,29 @@
                     <Text profile="fs25_settingsMultiTextOptionTitle" id="positionTitle"/>
                 </Bitmap>
 
-                <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="sectionFile"/>
+                <Bitmap profile="fs25_multiTextOptionContainer">
+                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="keyOption">
+                        <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="keyTooltip"/>
+                    </MultiTextOption>
+                    <Text profile="fs25_settingsMultiTextOptionTitle" id="keyTitle"/>
+                </Bitmap>
+
+                <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="sectionCrops"/>
 
                 <Bitmap profile="fs25_multiTextOptionContainer">
-                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="fileStatusOption">
-                        <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="fileStatusTooltip"/>
+                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="grassOption" onClick="onClickGrass">
+                        <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="grassTooltip"/>
                     </MultiTextOption>
-                    <Text profile="fs25_settingsMultiTextOptionTitle" id="fileStatusTitle"/>
-                    <!-- Green check / red cross, just left of the value box. Image is set in Lua. -->
-                    <Bitmap id="fileStatusIcon" with="anchorMiddleRight" position="-300px 0px" size="26px 26px"/>
+                    <Text profile="fs25_settingsMultiTextOptionTitle" id="grassTitle"/>
+                </Bitmap>
+
+                <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="sectionMultiplayer"/>
+
+                <Bitmap profile="fs25_multiTextOptionContainer">
+                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="editOption">
+                        <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="editTooltip"/>
+                    </MultiTextOption>
+                    <Text profile="fs25_settingsMultiTextOptionTitle" id="editTitle"/>
                 </Bitmap>
 
             </ScrollingLayout>
@@ -72,14 +79,10 @@
             <Bitmap profile="fs25_stopClipper" name="bottomClipper"/>
         </GuiElement>
 
-        <!-- Sub-tab 2: Plans (v2.0) -->
-        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPagePlans">
-            <Text profile="fs25_settingsNoPermissionText" id="plansPlaceholder"/>
-        </GuiElement>
+        <!-- Sub-tab 2: Plans (mockups 2 and 4), drawn in Lua -->
+        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPagePlans"/>
 
-        <!-- Sub-tab 3: Field groups (v2.0) -->
-        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPageGroups">
-            <Text profile="fs25_settingsNoPermissionText" id="groupsPlaceholder"/>
-        </GuiElement>
+        <!-- Sub-tab 3: Field groups (mockup 3), drawn in Lua -->
+        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPageGroups"/>
     </GuiElement>
 </GUI>

@@ -23,7 +23,7 @@ with `en` and `da`.
 | Alt+R full/minimized | Listed in the F1 help list in game; pressing it not yet reported. |
 | Position top/left | Built (top default: x=0.20, topY=0.99). Not yet seen in game. |
 | Plan from XML (`modSettings/FS25_CropRotationPlan/cropRotationPlan.xml`) | Built and unit-tested; to be replaced by savegame storage + editor in v2. |
-| Own tab in Esc menu | v1.3.1 showed white rows and sat last. v1.3.2 (not yet tested in game): rows coloured in Lua with `InGameMenuSettingsFrame.COLOR_ALTERNATING` (the row profile is white by default; FS25_AutoDrive and FS25_AdvancedDamageSystem do the same), page moved before `g_inGameMenu.pageSettings` in `pagingElement.elements`, `pagingElement.pages` and `pageFrames` + `rebuildTabList`, sub-tab bar Settings / Plans / Field groups (Plans and Field groups show "Coming in version 2.0"). |
+| Own tab in Esc menu | Registered (v1.3.1, Courseplay method) and shows, BUT rows render white with unreadable text, and the tab is at the end instead of above Settings. Screenshot `docs/screenshots/2026-10-30_ingame_tab_v1.3.1.png`. |
 | Multiplayer | Not supported (`<multiplayer supported="false"/>`). |
 
 Nothing in v1.x has been checked with GIANTS TestRunner.
@@ -103,9 +103,7 @@ https://claude.ai/artifact/SYuc3GY6Ye25LLeRJUDdUX (interactive; the logic in the
 ## 4. Repo map
 
 ```
-Build/                  The mod as it ships (zip the contents, not the folder). The owner chose this
-                        folder name (2026-10-30); "mod/" elsewhere in this file means Build/.
-                        Docs/ holds an old v1.1.0.0 copy for reference only.
+mod/                    The mod as it ships (zip the contents, not the folder)
   modDesc.xml           descVersion 105, l10n inline (en, da), action CRP_TOGGLE_SIZE (Alt+R)
   scripts/CropRotationPlan.lua        main: settings, HUD drawing, input, loadMap/deleteMap
   scripts/CropRotationPlanLogic.lua   pure functions: period/month, cycle year, field status
@@ -113,8 +111,6 @@ Build/                  The mod as it ships (zip the contents, not the folder). 
   scripts/CropRotationPlanFrame.lua   Esc menu tab (v1.3.1)
   gui/CropRotationPlanFrame.xml       tab layout (renders badly, replace)
   defaultConfig.xml     the owner's Riverbend plan, used as test fixture
-NOT in the local repo yet (lost with the cloud session): tests/, tools/, docs/mockups/, docs/screenshots/.
-The mockups can be copied from the canvas link in section 3.
 tests/
   check_static.py       XML, Lua block balance, l10n keys
   check_config.py       Python mirror of the config compiler, checks defaultConfig.xml gives the original plan
@@ -163,7 +159,7 @@ docs/screenshots/       in-game screenshots and the log of the v1.3.0 menu freez
 7. TestRunner, English/German texts and screenshots if it goes to ModHub (see ModHub guidelines; scripts mean PC only).
 
 ## 7. Open questions for the owner
-- Multiplayer: DECIDED 2026-10-30, no farm-manager restriction. Everyone on the farm may edit the plan; drop the "Who can edit the plan" setting from 3.2. The server still validates that the sender belongs to the farm.
-- Rice: show as "needs paddy" or hide on maps without paddies? Still open: https://github.com/andersdissing/FS25-Mod_CropRotationPlan/issues/1
-- Import of the existing modSettings XML into the savegame: DECIDED 2026-10-30, not wanted. Drop the optional import in 3.8.
+- Multiplayer: who may edit the plan, only the farm manager or everyone on the farm?
+- Rice: show as "needs paddy" or hide on maps without paddies?
+- Import of the existing modSettings XML into the savegame: wanted?
 - Coffee and Bananas (Beans & Alpacas DLC) have no calendar on the wiki; handled automatically if the growth data is read from the game.

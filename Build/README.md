@@ -1,73 +1,54 @@
 # FS25_CropRotationPlan
 
-Viser sædskifteplanen for Riverbend Springs som et HUD i spillet.
+Planlæg sædskiftet i spillet og se på skærmen, hvad der skal sås og høstes i denne måned.
 
 ## Installation
 Læg `FS25_CropRotationPlan.zip` (uudpakket) i mods-mappen:
 `Documents\My Games\FarmingSimulator2025\mods`
 Aktivér moddet når du indlæser savegamet.
 
-## Indstillinger
-Åbn menuen (Esc) og vælg fanen "Sædskifteplan":
-- Startår (cyklusår 1): det spilår der er År 1 i planen.
+## Menuen (Esc) > Sædskifteplan
+
+### Indstillinger
 - Visning: Fuld, Minimeret eller Skjult.
-- Placering: Top (øverst på skærmen, standard) eller Venstre (over minikortet).
-- Planfil: viser om cropRotationPlan.xml er OK. Filen læses igen hver gang fanen åbnes, så du kan rette den mens spillet kører.
+- Placering: Top eller Venstre.
+- Tast: Alt+R skifter mellem fuld og minimeret (ændres under Indstillinger > Styring).
+- Græs i sædskiftet: Til / Fra.
 
-Fuld viser begge grupper (4-årig og 2-årig cyklus) med alle marker.
-Minimeret viser kun ét lille ikon:
-- Gult med et tal: der er opgaver denne måned, tallet er antal marker.
-- Grønt: der er opgaver næste måned.
-- Gråt og gennemsigtigt: intet at gøre denne eller næste måned (fx december).
+### Planer
+Listen over planer, + Ny plan, Rediger plan og Slet plan. En plan kan vises som kolonner (et år pr. kolonne)
+eller årsrækker (januar til december, en bjælke pr. afgrøde fra såning til høst).
 
-Genvejstast: Alt+R skifter mellem fuld og minimeret. Tasten ændres under Indstillinger > Styring, hvor den hedder "Sædskifteplan: fuld/minimeret".
-Konsol (kræver udviklerkonsol): `crpSetStartYear <år>`
+Planeditoren (Rediger plan) viser et årshjul med en række pr. år:
+- Klik på et stiplet hul (ledige måneder). Kun afgrøder der kan gro i hullet kan vælges; de andre er grå,
+  og grunden står når musen holdes over dem.
+- Vælg såmåneden. Høstmåneden regnes ud fra afgrødens vækstid. Høst må falde i næste afgrødes såmåned.
+- Græs lægges som græsmark: vælg hvor længe (3 eller 6 mdr., 1, 2 eller 3 år) og hvornår der slås
+  ("Klar til høst" hver 2. vækstmåned eller "Fuldt udvokset" hver 3.). Ingen vækst november til februar.
+- Klik på en bjælke for at se eller fjerne afgrøden.
+- Intet gemmes før du trykker Gem plan.
 
-Indstillingerne gemmes i `cropRotationPlan.xml` i savegame-mappen, så hvert savegame har sit eget startår.
-Indtil startåret er sat, bruger moddet det aktuelle spilår og viser footeren i rødt.
+### Markgrupper
+En række pr. gruppe: marker, plan, "Planår nu" og årets afgrøder.
+- + Ny markgruppe, klik derefter på dine marker i panelet til højre for at tilføje dem.
+- Klik på en mark i gruppen for at tage den ud.
+- "Planår nu" er hvor gruppen er i sin plan i år. Det rykker selv videre hvert år.
 
-## Hvad den fulde visning viser
-To grupper: 4-årig cyklus (mark 3, 4, 5 / 6, 7 / 8 / 23, 25) og 2-årig cyklus (mark 76 og 77).
-Gruppens overskrift viser cyklusåret (fx År 2/4). Hver mark viser årets afgrøder og hvad der skal gøres nu
-("Nu: Høst Wheat") eller næste gang ("Næste: Så Canola (aug/sep)").
+## På skærmen
+Fuld visning: en linje pr. markgruppe under planens navn med planår, årets afgrøder og
+"Nu: Høst Hvede" (gult) eller "Næste: Så Raps (aug)".
+Minimeret: ét ikon. Gult med tal = opgaver denne måned (antal marker), grønt = opgaver næste måned, gråt = intet.
 
-I spilåret før cyklusår 1 vises "Start" med efterårsarbejdet:
-- 3, 4, 5: Så Barley (sep)
-- 6, 7: Så Wheat (okt)
-- 23, 25 og 76: Så Canola (aug/sep)
-- 8 og 77: Lad stå tom
+## Gemt i savegamet
+Alt gemmes i `cropRotationPlan.xml` i savegame-mappen. Et nyt savegame starter tomt.
 
-## Planen (konfigurationsfil)
-Planen ligger i
-`Documents\My Games\FarmingSimulator2025\modSettings\FS25_CropRotationPlan\cropRotationPlan.xml`
+## Afgrøder
+Afgrøderne læses fra spillet (kort, DLC og mod-afgrøder) med så- og høstmåneder fra spillets egen
+afgrødekalender. Træer, plantager, sukkerrør og efterafgrøder kan ikke indgå. Ris kræver en rismark.
 
-Moddet opretter filen med standardplanen første gang det kører. Ret den i Notesblok.
-Ændringer læses når savegamet indlæses, eller med konsolkommandoen `crpReloadConfig`.
-Slet filen for at få standardplanen igen. `defaultConfig.xml` i moddet er standardplanen med forklarende kommentarer.
+## Konsol (udviklerkonsol)
+- `crpLoadExample`: erstatter planer og markgrupper med eksemplet for Riverbend Springs.
+- `crpReloadCrops`: læser afgrøderne igen og skriver dem i konsollen.
 
-Filen har tre dele:
-
-1. `<crops>`: afgrødekalenderen. Hvornår hver afgrøde kan sås og høstes, fx
-   `<crop name="Oats" sow="3-4" harvest="7-8"/>`. Måneder skrives som "8 9" eller "4-7".
-2. `<plans>`: sædplanerne. `years` er antal år i cyklussen, og der skal være lige så mange `<year>`.
-   Hver `<year>` lister afgrøderne i rækkefølge. Står samme afgrøde sidst i et år og først i det næste,
-   er den sået i efteråret og høstet året efter. `sow`/`harvest` på en afgrøde i planen overskriver kalenderen.
-3. `<fieldGroups>`: sammenlagte marker. `fields="3 4 5"`, `plan` = navnet på en plan og
-   `startPlanYear` = hvilket år i planen gruppen er i, når cyklusår 1 starter.
-
-Visningen laver én gruppe pr. plan. Startarbejdet i efteråret før År 1 regnes ud fra planen.
-
-Er der fejl i filen, bruger moddet standardplanen, skriver fejlene i `log.txt` (linjer med `[CropRotationPlan]`),
-viser en rød linje i den fulde visning og farver ikonet rødt.
-
-Eksempel på en ny 3-årig plan:
-
-```xml
-<plan name="3-årig" years="3">
-    <year><crop name="Oats"/></year>
-    <year><crop name="Sorghum"/></year>
-    <year><crop name="Peas"/><crop name="Wheat"/></year>
-</plan>
-...
-<fieldGroup fields="12 13" plan="3-årig" startPlanYear="1"/>
-```
+## Multiplayer
+Understøttes ikke endnu.

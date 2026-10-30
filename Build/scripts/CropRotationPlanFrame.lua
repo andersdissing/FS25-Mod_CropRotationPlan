@@ -1,17 +1,16 @@
 -- CropRotationPlanFrame.lua
 -- Own tab in the in-game menu (Esc), placed directly above the base game Settings tab.
 -- Three sub-tabs:
---   Settings:     start year (cycle year 1), display full / minimized / hidden,
---                 position top / left, status of cropRotationPlan.xml (re-read every time the tab opens)
---   Plans:        placeholder until v2.0
---   Field groups: placeholder until v2.0
+--   Settings:     display full / minimized / hidden, position top / left, the show/minimize key,
+--                 grass in rotation, who can edit (base game option rows from the XML)
+--   Plans:        list of plans and the plan editor (CropRotationPlanPages, drawn in :draw)
+--   Field groups: field groups and the farm's own fields (CropRotationPlanPages, drawn in :draw)
 --
 -- The page is added to the in-game menu when the savegame loads and removed again
 -- when it is closed.
 
 CropRotationPlanFrame = {}
 CropRotationPlanFrame.GUI_NAME = "CropRotationPlanFrame"
-CropRotationPlanFrame.YEARS_AHEAD = 10
 
 CropRotationPlanFrame.SUB_PAGE = {
     SETTINGS = 1,
@@ -76,6 +75,8 @@ end
 function CropRotationPlanFrame.new(target, customMt)
     local self = TabbedMenuFrameElement.new(target, customMt or CropRotationPlanFrame_mt)
     self.currentSubPage = CropRotationPlanFrame.SUB_PAGE.SETTINGS
+    -- Plans / Field groups pages: mouse, clickable boxes, selection, plan editor copy
+    self.pageState = { hits = {} }
     return self
 end
 
@@ -204,9 +205,6 @@ end
 function CropRotationPlanFrame:onFrameOpen()
     CropRotationPlanFrame:superClass().onFrameOpen(self)
 
-    -- Pick up changes made to cropRotationPlan.xml while the game is running
-    CropRotationPlan:loadConfig()
-
     self:updateTexts()
     self:updateValues()
 
@@ -214,6 +212,7 @@ function CropRotationPlanFrame:onFrameOpen()
         self.settingsLayout:invalidateLayout()
     end
     self:updateRowColors()
+    CropRotationPlanPages.refreshOwnedFields(self.pageState)
     self:updateSubCategoryPages(self.currentSubPage)
 end
 
@@ -236,8 +235,8 @@ function CropRotationPlanFrame:updateSubCategoryPages(state)
         self.subCategoryPaging:setState(state, false)
     end
 
-    if FocusManager ~= nil and state == CropRotationPlanFrame.SUB_PAGE.SETTINGS and self.startYearOption ~= nil then
-        FocusManager:setFocus(self.startYearOption)
+    if FocusManager ~= nil and state == CropRotationPlanFrame.SUB_PAGE.SETTINGS and self.displayOption ~= nil then
+        FocusManager:setFocus(self.displayOption)
     end
 end
 
@@ -279,34 +278,31 @@ function CropRotationPlanFrame:updateTexts()
         setImage(self.headerIcon, self.modDirectory .. "icon_minimized.dds", 256)
     end
 
-    setText(self.plansPlaceholder, t("crp_comingSoon"))
-    setText(self.groupsPlaceholder, t("crp_comingSoon"))
-
-    setText(self.sectionPlan, t("crp_section_plan"))
     setText(self.sectionDisplay, t("crp_section_display"))
-    setText(self.sectionFile, t("crp_section_file"))
+    setText(self.sectionCrops, t("crp_section_crops"))
+    setText(self.sectionMultiplayer, t("crp_section_multiplayer"))
 
-    setText(self.startYearTitle, t("crp_settings_startYear"))
-    setText(self.startYearTooltip, t("crp_settings_startYear_tooltip"))
     setText(self.displayTitle, t("crp_settings_display"))
     setText(self.displayTooltip, t("crp_settings_display_tooltip"))
     setText(self.positionTitle, t("crp_settings_position"))
     setText(self.positionTooltip, t("crp_settings_position_tooltip"))
-    setText(self.fileStatusTitle, t("crp_settings_file"))
-    setText(self.fileStatusTooltip, string.format(t("crp_settings_file_tooltip"), CropRotationPlanConfig.getUserPath()))
+    setText(self.keyTitle, t("crp_settings_key"))
+    setText(self.keyTooltip, t("crp_settings_key_tooltip"))
+    setText(self.grassTitle, t("crp_settings_grass"))
+    setText(self.grassTooltip, t("crp_settings_grass_tooltip"))
+    setText(self.editTitle, t("crp_settings_edit"))
+    setText(self.editTooltip, t("crp_settings_edit_tooltip"))
+end
+
+-- An option row that only shows a text (the key, who can edit)
+local function setInfo(option, text)
+    if option ~= nil then
+        option:setTexts({ text })
+        option:setState(1, false)
+    end
 end
 
 function CropRotationPlanFrame:updateValues()
-    if self.startYearOption ~= nil then
-        local maxYear = math.max(CropRotationPlan:getCurrentYear() + CropRotationPlanFrame.YEARS_AHEAD, CropRotationPlan:getStartYear())
-        local texts = {}
-        for year = 1, maxYear do
-            table.insert(texts, string.format(t("crp_settings_yearText"), year))
-        end
-        self.startYearOption:setTexts(texts)
-        self.startYearOption:setState(CropRotationPlan:getStartYear(), false)
-    end
-
     if self.displayOption ~= nil then
         local texts = {}
         for _, mode in ipairs(CropRotationPlan.DISPLAY_MODES) do
@@ -325,18 +321,13 @@ function CropRotationPlanFrame:updateValues()
         self.positionOption:setState(CropRotationPlan:getPositionIndex(), false)
     end
 
-    if self.fileStatusOption ~= nil then
-        self.fileStatusOption:setTexts({ CropRotationPlan:getConfigStatusText() })
-        self.fileStatusOption:setState(1, false)
+    if self.grassOption ~= nil then
+        self.grassOption:setTexts({ t("crp_on"), t("crp_off") })
+        self.grassOption:setState(CropRotationPlan:getGrassInRotation() and 1 or 2, false)
     end
-    if self.modDirectory ~= nil then
-        local icon = CropRotationPlan:getConfigOk() and "icon_statusOk.dds" or "icon_statusError.dds"
-        setImage(self.fileStatusIcon, self.modDirectory .. icon, 64)
-    end
-end
 
-function CropRotationPlanFrame:onClickStartYear(state)
-    CropRotationPlan:setStartYear(state)
+    setInfo(self.keyOption, t("crp_settings_key_value"))
+    setInfo(self.editOption, t("crp_settings_edit_value"))
 end
 
 function CropRotationPlanFrame:onClickDisplay(state)
@@ -351,4 +342,91 @@ function CropRotationPlanFrame:onClickPosition(state)
     if position ~= nil then
         CropRotationPlan:setPosition(position)
     end
+end
+
+function CropRotationPlanFrame:onClickGrass(state)
+    CropRotationPlan:setGrassInRotation(state == 1)
+end
+
+---------------------------------------------------------------------------
+-- Plans and Field groups: drawn here, clicks matched against the drawn boxes
+---------------------------------------------------------------------------
+
+function CropRotationPlanFrame:getCustomPageArea()
+    local container = self.subPages ~= nil and self.subPages[self.currentSubPage] or nil
+    if container == nil or container.absPosition == nil or container.absSize == nil then
+        return nil
+    end
+    if container.absSize[1] <= 0 or container.absSize[2] <= 0 then
+        return nil
+    end
+    return { x = container.absPosition[1], y = container.absPosition[2], w = container.absSize[1], h = container.absSize[2] }
+end
+
+function CropRotationPlanFrame:draw(...)
+    CropRotationPlanFrame:superClass().draw(self, ...)
+
+    local page = self.currentSubPage
+    if page ~= CropRotationPlanFrame.SUB_PAGE.PLANS and page ~= CropRotationPlanFrame.SUB_PAGE.GROUPS then
+        return
+    end
+    local area = self:getCustomPageArea()
+    if area == nil then
+        return
+    end
+
+    local state = self.pageState
+    CropRotationPlanUI.begin(state)
+    state.scrollRegion = nil
+    state.panelRegion = nil
+    local drawPage = page == CropRotationPlanFrame.SUB_PAGE.PLANS and CropRotationPlanPages.drawPlans or CropRotationPlanPages.drawGroups
+    local ok, err = pcall(drawPage, state, area)
+    if not ok then
+        -- Log once, not every frame
+        if state.lastError ~= err then
+            state.lastError = err
+            Logging.error("[CropRotationPlan] Drawing page %d failed: %s", page, tostring(err))
+        end
+        if page == CropRotationPlanFrame.SUB_PAGE.PLANS and state.editor ~= nil then
+            state.editor = nil
+        end
+    end
+    CropRotationPlanUI.drawTooltip(state)
+    CropRotationPlanUI.finish()
+end
+
+local function isInside(region, x, y)
+    return region ~= nil and x >= region.x and x <= region.x + region.w and y >= region.y and y <= region.y + region.h
+end
+
+function CropRotationPlanFrame:mouseEvent(posX, posY, isDown, isUp, button, eventUsed)
+    local state = self.pageState
+    state.mouseX, state.mouseY = posX, posY
+
+    local page = self.currentSubPage
+    local custom = page == CropRotationPlanFrame.SUB_PAGE.PLANS or page == CropRotationPlanFrame.SUB_PAGE.GROUPS
+    if custom and not eventUsed and isDown and self:getIsVisible() then
+        if button == Input.MOUSE_BUTTON_LEFT then
+            local ok, hit = pcall(CropRotationPlanUI.click, state, posX, posY)
+            if not ok then
+                Logging.error("[CropRotationPlan] Click failed: %s", tostring(hit))
+                return true
+            end
+            if hit then
+                return true
+            end
+        elseif button == Input.MOUSE_BUTTON_WHEEL_UP or button == Input.MOUSE_BUTTON_WHEEL_DOWN then
+            local dir = button == Input.MOUSE_BUTTON_WHEEL_UP and -1 or 1
+            local ed = state.editor
+            if page == CropRotationPlanFrame.SUB_PAGE.PLANS and ed ~= nil and isInside(state.panelRegion, posX, posY) then
+                ed.panelScroll = math.max(0, math.min(CropRotationPlanUI.py(1500), (ed.panelScroll or 0) + dir * CropRotationPlanUI.py(48)))
+                return true
+            elseif page == CropRotationPlanFrame.SUB_PAGE.GROUPS and isInside(state.scrollRegion, posX, posY) then
+                state.groupScroll = math.max(0, math.min(state.scrollRegion.max, (state.groupScroll or 0) + dir))
+                return true
+            end
+        end
+    end
+
+    return CropRotationPlanFrame:superClass().mouseEvent(self, posX, posY, isDown, isUp, button, eventUsed)
 end

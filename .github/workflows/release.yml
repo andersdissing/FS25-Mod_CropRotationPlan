@@ -31,10 +31,12 @@ jobs:
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      - name: Static checks
+      - name: Static checks and tests
         run: |
-          pip install --quiet luaparser
+          pip install --quiet luaparser lupa
           python3 tests/check_static.py Build
+          python3 tests/test_logic.py
+          python3 tests/smoke_test.py
 
       - name: Build zip
         # Zip the contents of Build/, not the folder. The file name stays FS25_CropRotationPlan.zip:

@@ -1,71 +1,40 @@
 # FS25_CropRotationPlan
 
-Viser sædskifteplanen for Riverbend Springs som et HUD i spillet.
+Farming Simulator 25 mod: build crop rotation plans in the game (menu Esc > Crop rotation plan)
+and see on screen what to sow and harvest this month. Player documentation (Danish): `Build/README.md`.
 
-## Installation
-Læg `FS25_CropRotationPlan.zip` (uudpakket) i mods-mappen:
-`Documents\My Games\FarmingSimulator2025\mods`
-Aktivér moddet når du indlæser savegamet.
+## Repository
 
-## Indstillinger
-Åbn menuen (Esc) > Indstillinger > Generelt og rul ned til afsnittet "Sædskifteplan":
-- Startår (cyklusår 1): det spilår der er År 1 i planen.
-- Visning: Fuld, Minimeret eller Skjult.
-
-Fuld viser begge grupper (4-årig og 2-årig cyklus) med alle marker.
-Minimeret viser kun ét lille ikon:
-- Gult med et tal: der er opgaver denne måned, tallet er antal marker.
-- Grønt: der er opgaver næste måned.
-- Gråt og gennemsigtigt: intet at gøre denne eller næste måned (fx december).
-
-Genvejstast: Alt+R skifter mellem fuld og minimeret. Tasten ændres under Indstillinger > Styring, hvor den hedder "Sædskifteplan: fuld/minimeret".
-Konsol (kræver udviklerkonsol): `crpSetStartYear <år>`
-
-Indstillingerne gemmes i `cropRotationPlan.xml` i savegame-mappen, så hvert savegame har sit eget startår.
-Indtil startåret er sat, bruger moddet det aktuelle spilår og viser footeren i rødt.
-
-## Hvad den fulde visning viser
-To grupper: 4-årig cyklus (mark 3, 4, 5 / 6, 7 / 8 / 23, 25) og 2-årig cyklus (mark 76 og 77).
-Gruppens overskrift viser cyklusåret (fx År 2/4). Hver mark viser årets afgrøder og hvad der skal gøres nu
-("Nu: Høst Wheat") eller næste gang ("Næste: Så Canola (aug/sep)").
-
-I spilåret før cyklusår 1 vises "Start" med efterårsarbejdet:
-- 3, 4, 5: Så Barley (sep)
-- 6, 7: Så Wheat (okt)
-- 23, 25 og 76: Så Canola (aug/sep)
-- 8 og 77: Lad stå tom
-
-## Planen (konfigurationsfil)
-Planen ligger i
-`Documents\My Games\FarmingSimulator2025\modSettings\FS25_CropRotationPlan\cropRotationPlan.xml`
-
-Moddet opretter filen med standardplanen første gang det kører. Ret den i Notesblok.
-Ændringer læses når savegamet indlæses, eller med konsolkommandoen `crpReloadConfig`.
-Slet filen for at få standardplanen igen. `defaultConfig.xml` i moddet er standardplanen med forklarende kommentarer.
-
-Filen har tre dele:
-
-1. `<crops>`: afgrødekalenderen. Hvornår hver afgrøde kan sås og høstes, fx
-   `<crop name="Oats" sow="3-4" harvest="7-8"/>`. Måneder skrives som "8 9" eller "4-7".
-2. `<plans>`: sædplanerne. `years` er antal år i cyklussen, og der skal være lige så mange `<year>`.
-   Hver `<year>` lister afgrøderne i rækkefølge. Står samme afgrøde sidst i et år og først i det næste,
-   er den sået i efteråret og høstet året efter. `sow`/`harvest` på en afgrøde i planen overskriver kalenderen.
-3. `<fieldGroups>`: sammenlagte marker. `fields="3 4 5"`, `plan` = navnet på en plan og
-   `startPlanYear` = hvilket år i planen gruppen er i, når cyklusår 1 starter.
-
-Visningen laver én gruppe pr. plan. Startarbejdet i efteråret før År 1 regnes ud fra planen.
-
-Er der fejl i filen, bruger moddet standardplanen, skriver fejlene i `log.txt` (linjer med `[CropRotationPlan]`),
-viser en rød linje i den fulde visning og farver ikonet rødt.
-
-Eksempel på en ny 3-årig plan:
-
-```xml
-<plan name="3-årig" years="3">
-    <year><crop name="Oats"/></year>
-    <year><crop name="Sorghum"/></year>
-    <year><crop name="Peas"/><crop name="Wheat"/></year>
-</plan>
-...
-<fieldGroup fields="12 13" plan="3-årig" startPlanYear="1"/>
 ```
+Build/          the mod as it ships (zip the contents, not the folder)
+  scripts/CropRotationPlan.lua        main: settings, on-screen plan, input, load/save hooks
+  scripts/CropRotationPlanLogic.lua   pure plan rules (gaps, sow months, ley, plan year, tasks)
+  scripts/CropRotationPlanCrops.lua   crops read from the game (fruit types, growth time, icons)
+  scripts/CropRotationPlanData.lua    plans, field groups, settings in <savegame>/cropRotationPlan.xml
+  scripts/CropRotationPlanUI.lua      drawing toolkit for the custom menu pages
+  scripts/CropRotationPlanPages.lua   Plans, plan editor and Field groups pages
+  scripts/CropRotationPlanFrame.lua   the Esc menu tab
+  gui/CropRotationPlanFrame.xml       tab layout (header, sub-tabs, Settings rows)
+Docs/           old v1.1 copy, reference only
+tests/          check_static.py, test_logic.py, smoke_test.py
+tools/          deploy.ps1 (local test), release.ps1 (GitHub release)
+```
+
+## Checks and tests
+
+```
+pip install luaparser lupa
+python tests/check_static.py Build   # XML, Lua 5.1 syntax, l10n keys and placeholders
+python tests/test_logic.py           # plan rules in a real Lua runtime
+python tests/smoke_test.py           # the whole mod against a stubbed FS25, incl. random clicking
+```
+
+## Test in the game
+
+`pwsh -File tools\deploy.ps1` builds the zip, closes FS25, keeps the last log in `dist\logs`,
+copies the zip to the mods folder and starts the game.
+
+## Release
+
+`pwsh -File tools\release.ps1 2.0.0.0` sets the version in `Build/modDesc.xml`, tags `v2.0.0.0` and
+pushes; the GitHub workflow runs the tests and publishes the release with the zip.
