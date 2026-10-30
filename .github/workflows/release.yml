@@ -1,0 +1,55 @@
+# Release: push a tag v<modDesc version>, e.g. v1.3.2.0 for <version>1.3.2.0</version>.
+# The workflow fails if the tag and Build/modDesc.xml disagree, so the version inside
+# the released zip always matches the release tag. Use tools/release.ps1 to set both.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      MOD_NAME: FS25_CropRotationPlan
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches modDesc version
+        id: version
+        run: |
+          version=$(python3 -c "import xml.etree.ElementTree as E; print(E.parse('Build/modDesc.xml').getroot().findtext('version').strip())")
+          tag="${GITHUB_REF_NAME}"
+          echo "modDesc version: $version, tag: $tag"
+          if [ "$tag" != "v$version" ]; then
+            echo "::error::Tag $tag does not match modDesc version $version (expected tag v$version)"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Static checks
+        run: |
+          pip install --quiet luaparser
+          python3 tests/check_static.py Build
+
+      - name: Build zip
+        # Zip the contents of Build/, not the folder. The file name stays FS25_CropRotationPlan.zip:
+        # the game takes the mod name from it, so a version in the name would break savegames.
+        run: |
+          mkdir -p dist
+          cd Build
+          zip -r -X "../dist/${MOD_NAME}.zip" .
+          cd ..
+          unzip -l "dist/${MOD_NAME}.zip"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" "dist/${MOD_NAME}.zip" \
+            --title "${MOD_NAME} ${{ steps.version.outputs.version }}" \
+            --generate-notes
