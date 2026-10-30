@@ -88,7 +88,7 @@ end
 
 local function cropLabel(crop)
     if crop.ley then
-        return string.format("%s (%s)", crop.title, t("crp_ley"))
+        return string.format(t("crp_leyCrop"), crop.title)
     end
     return crop.title
 end

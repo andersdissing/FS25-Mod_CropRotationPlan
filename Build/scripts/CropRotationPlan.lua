@@ -342,7 +342,7 @@ function CropRotationPlan.cropsText(names)
     for _, name in ipairs(names) do
         local crop = CropRotationPlanCrops.get(name)
         if crop.ley then
-            table.insert(parts, string.format("%s (%s)", crop.title, t("crp_ley")))
+            table.insert(parts, string.format(t("crp_leyCrop"), crop.title))
         else
             table.insert(parts, crop.title)
         end
@@ -385,7 +385,7 @@ function CropRotationPlan:buildGroups()
                 elseif s.nextTask ~= nil then
                     local when = monthName(s.nextMonth)
                     if s.nextIsNextYear then
-                        when = when .. " " .. t("crp_nextYearShort")
+                        when = string.format(t("crp_whenNextYear"), when)
                     end
                     row.status = string.format("%s: %s (%s)", t("crp_next"), CropRotationPlan.taskText(s.nextTask), when)
                     row.nextIn = s.nextIn

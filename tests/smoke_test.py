@@ -245,11 +245,26 @@ g_inGameMenu = {
     updateAbsolutePosition = function() end,
     updatePageMapping = function() end,
   },
+  pageTabs = { [pageMap] = { iconFilename = "map" }, [pageSettings] = { iconFilename = "settings" } },
+  enabledPages = { pageMap, pageSettings },
+  restorePageIndex = 3,
   registerPage = function(self, f) table.insert(self.pageFrames, f) end,
-  addPageTab = function() end,
-  rebuildTabList = function() end,
-  unregisterPage = function() end,
+  addPageTab = function(self, f, icon) self.pageTabs[f] = { iconFilename = icon } end,
+  -- Like TabbedMenu:rebuildTabList: the tab list is every page in pageFrames
+  rebuildTabList = function(self)
+    self.enabledPages = {}
+    for _, page in ipairs(self.pageFrames) do table.insert(self.enabledPages, page) end
+  end,
+  -- Like TabbedMenu:unregisterPage when the class lookup fails: nothing is removed
+  unregisterPage = function() return false end,
 }
+-- What TabbedMenu.lua:285 needs: every page in the tab list has a tab
+function tabListConsistent()
+  for _, page in ipairs(g_inGameMenu.enabledPages) do
+    if g_inGameMenu.pageTabs[page] == nil then return false end
+  end
+  return true
+end
 
 -- Game state
 g_currentMission = {
@@ -663,7 +678,11 @@ for i in range(1, len(farm().plans) + 1):
     check(f"plan {i} still valid after random clicks", len(G.CropRotationPlanLogic.getOverlaps(farm().plans[i], C.byName)) == 0)
 check("random clicking: no rejected edits", len(pylist(G.WARNINGS)) == 0, pylist(G.WARNINGS)[:3])
 
+check("tab list consistent while the mod is loaded", G.tabListConsistent() is True)
 MOD.deleteMap(MOD)
+check("after unloading: page gone from every menu list", G.tabListConsistent() is True
+      and len(G.g_inGameMenu.pageFrames) == 2 and len(G.g_inGameMenu.enabledPages) == 2)
+check("after unloading: restore index back in range", G.g_inGameMenu.restorePageIndex == 1)
 check("single player: no errors logged", len(errors(lua)) == 0, errors(lua)[:3])
 
 # =====================================================================================

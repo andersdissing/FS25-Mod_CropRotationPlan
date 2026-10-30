@@ -37,14 +37,33 @@ BASE_KEYS = {"button_ok"}
 # Key prefixes built at runtime: prefix + value
 PREFIXES = ("crp_month_", "crp_action_", "crp_display_", "crp_position_")
 
+# ModHub: every UI text needs at least EN and DE (guideline 8.2); we also ship DA.
+# Texts must start with a capital letter (guideline 5.5); a placeholder or "+"/"\"" start is fine.
+LANGUAGES = ("en", "de", "da")
 placeholder = re.compile(r"%[ds]")
 for name, t in texts.items():
-    en, da = t.find("en"), t.find("da")
-    if en is None or da is None:
-        fail("MISSING en/da for l10n", name)
+    values = {lang: t.find(lang) for lang in LANGUAGES}
+    missing = [lang for lang, v in values.items() if v is None or not (v.text or "").strip()]
+    if missing:
+        fail("MISSING", "/".join(missing), "for l10n", name)
         continue
-    if placeholder.findall(en.text or "") != placeholder.findall(da.text or ""):
-        fail("PLACEHOLDERS differ en/da", name, placeholder.findall(en.text or ""), placeholder.findall(da.text or ""))
+    en_ph = placeholder.findall(values["en"].text)
+    for lang in ("de", "da"):
+        if placeholder.findall(values[lang].text) != en_ph:
+            fail("PLACEHOLDERS differ en/" + lang, name, en_ph, placeholder.findall(values[lang].text))
+    for lang, v in values.items():
+        first = v.text.lstrip()[:1]
+        if first.isalpha() and first != first.upper():
+            fail("LOWER-CASE START", lang, name, v.text[:40])
+
+for part in ("title", "description"):
+    element = desc.find(part)
+    for lang in LANGUAGES:
+        if element is None or element.find(lang) is None or not (element.find(lang).text or "").strip():
+            fail("MISSING", lang, "in modDesc", part)
+    if element is not None and element.find("de") is not None and element.find("en") is not None \
+            and element.find("de").text == element.find("en").text and part == "description":
+        fail("German description is a copy of the English one")
 
 used = set()
 for f in glob.glob(root + "/scripts/*.lua"):

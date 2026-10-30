@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<modDesc descVersion="105">
+<modDesc descVersion="115">
     <author>Anders Dissing</author>
-    <version>2.2.0.0</version>
+    <version>2.3.0.0</version>
     <title>
         <en>Crop Rotation Plan</en>
+        <de>Fruchtfolgeplan</de>
         <da>Sædskifteplan</da>
     </title>
     <description>
@@ -18,6 +19,17 @@ Crops are read from the game (map, DLC and mod crops). Plans are saved in the sa
 Multiplayer: each farm has its own plans and field groups. The farm manager edits them, or lets everyone on the farm edit them.
 Alt+R: switch between full and minimized.
 Console: crpLoadExample (Riverbend Springs example plan), crpReloadCrops]]></en>
+        <de><![CDATA[Plane deine Fruchtfolge direkt im Spiel und sieh auf dem Bildschirm, was in diesem Monat gesät und geerntet werden muss.
+
+Menü (Esc) > Fruchtfolgeplan:
+- Pläne: Baue einen Plan Jahr für Jahr auf einem Jahresrad (Januar bis Dezember). Angeboten werden nur Feldfrüchte, die in einer freien Lücke wachsen können; du wählst den Saatmonat, der Erntemonat ergibt sich aus der Wachstumszeit. Gras kann als Grünland mit Schnittintervall eingeplant werden.
+- Feldgruppen: Fasse deine Felder in Gruppen zusammen, wähle einen Plan und wo die Gruppe dieses Jahr im Plan steht. Das rückt jedes Jahr von selbst weiter.
+- Einstellungen: Anzeige voll / minimiert / ausgeblendet, Position oben / links, Gras in der Fruchtfolge.
+
+Die Feldfrüchte werden aus dem Spiel gelesen (Karte, DLC und Mod-Früchte). Die Pläne werden im Spielstand gespeichert; ein neuer Spielstand beginnt leer.
+Mehrspieler: Jeder Hof hat eigene Pläne und Feldgruppen. Standardmäßig bearbeitet nur der Hofverwalter sie; er kann es allen auf dem Hof erlauben.
+Alt+R: zwischen voll und minimiert umschalten.
+Konsole: crpLoadExample (Beispielplan für Riverbend Springs), crpReloadCrops]]></de>
         <da><![CDATA[Planlæg dit sædskifte i spillet og se på skærmen, hvad der skal sås og høstes i denne måned.
 
 Menu (Esc) > Sædskifteplan:
@@ -48,173 +60,173 @@ Konsol: crpLoadExample (eksempelplan for Riverbend Springs), crpReloadCrops]]></
     </inputBinding>
 
     <l10n>
-        <text name="input_CRP_TOGGLE_SIZE"><en>Crop rotation plan: full/minimized</en><da>Sædskifteplan: fuld/minimeret</da></text>
+        <text name="input_CRP_TOGGLE_SIZE"><en>Crop rotation plan: full/minimized</en><de>Fruchtfolgeplan: voll/minimiert</de><da>Sædskifteplan: fuld/minimeret</da></text>
 
         <!-- On-screen plan -->
-        <text name="crp_title"><en>Crop rotation plan | game year %d | %s</en><da>Sædskifteplan | spilår %d | %s</da></text>
-        <text name="crp_hudEmpty"><en>No field groups yet. Make plans and field groups in the menu (Esc) &gt; Crop rotation plan</en><da>Ingen markgrupper endnu. Lav planer og markgrupper i menuen (Esc) &gt; Sædskifteplan</da></text>
-        <text name="crp_field"><en>Field</en><da>Mark</da></text>
-        <text name="crp_fields"><en>Fields</en><da>Marker</da></text>
-        <text name="crp_cycleYear"><en>Year %d/%d</en><da>År %d/%d</da></text>
-        <text name="crp_now"><en>Now</en><da>Nu</da></text>
-        <text name="crp_next"><en>Next</en><da>Næste</da></text>
-        <text name="crp_nextYearShort"><en>next year</en><da>næste år</da></text>
-        <text name="crp_action_sow"><en>Sow</en><da>Så</da></text>
-        <text name="crp_action_harvest"><en>Harvest</en><da>Høst</da></text>
-        <text name="crp_action_cut"><en>Cut</en><da>Slå</da></text>
-        <text name="crp_ley"><en>ley</en><da>græsmark</da></text>
+        <text name="crp_title"><en>Crop rotation plan | game year %d | %s</en><de>Fruchtfolgeplan | Spieljahr %d | %s</de><da>Sædskifteplan | spilår %d | %s</da></text>
+        <text name="crp_hudEmpty"><en>No field groups yet. Make plans and field groups in the menu (Esc) &gt; Crop rotation plan</en><de>Noch keine Feldgruppen. Pläne und Feldgruppen im Menü (Esc) &gt; Fruchtfolgeplan anlegen</de><da>Ingen markgrupper endnu. Lav planer og markgrupper i menuen (Esc) &gt; Sædskifteplan</da></text>
+        <text name="crp_field"><en>Field</en><de>Feld</de><da>Mark</da></text>
+        <text name="crp_fields"><en>Fields</en><de>Felder</de><da>Marker</da></text>
+        <text name="crp_cycleYear"><en>Year %d/%d</en><de>Jahr %d/%d</de><da>År %d/%d</da></text>
+        <text name="crp_now"><en>Now</en><de>Jetzt</de><da>Nu</da></text>
+        <text name="crp_next"><en>Next</en><de>Nächstes</de><da>Næste</da></text>
+        <text name="crp_whenNextYear"><en>%s next year</en><de>%s nächstes Jahr</de><da>%s næste år</da></text>
+        <text name="crp_action_sow"><en>Sow</en><de>Säen</de><da>Så</da></text>
+        <text name="crp_action_harvest"><en>Harvest</en><de>Ernten</de><da>Høst</da></text>
+        <text name="crp_action_cut"><en>Cut</en><de>Mähen</de><da>Slå</da></text>
+        <text name="crp_leyCrop"><en>%s (ley)</en><de>%s (Grünland)</de><da>%s (græsmark)</da></text>
 
         <!-- Menu tab and Settings -->
-        <text name="ui_cropRotationPlan"><en>Crop rotation plan</en><da>Sædskifteplan</da></text>
-        <text name="crp_tab_title"><en>Crop rotation plan</en><da>Sædskifteplan</da></text>
-        <text name="crp_subtab_settings"><en>Settings</en><da>Indstillinger</da></text>
-        <text name="crp_subtab_plans"><en>Plans</en><da>Planer</da></text>
-        <text name="crp_subtab_groups"><en>Field groups</en><da>Markgrupper</da></text>
-        <text name="crp_section_display"><en>Display</en><da>Visning</da></text>
-        <text name="crp_section_crops"><en>Crops</en><da>Afgrøder</da></text>
-        <text name="crp_section_multiplayer"><en>Multiplayer</en><da>Multiplayer</da></text>
-        <text name="crp_settings_display"><en>Display</en><da>Visning</da></text>
-        <text name="crp_settings_display_tooltip"><en>Full shows every field group. Minimized shows one icon: yellow = work this month (with number of fields), green = work next month, grey = nothing to do. Where each field group is in its plan is set under Field groups.</en><da>Fuld viser alle markgrupper. Minimeret viser ét ikon: gult = opgaver denne måned (med antal marker), grønt = opgaver næste måned, gråt = intet at gøre. Hvor hver markgruppe er i sin plan sættes under Markgrupper.</da></text>
-        <text name="crp_settings_position"><en>Position</en><da>Placering</da></text>
-        <text name="crp_settings_position_tooltip"><en>Where the crop rotation plan is shown: at the top of the screen or on the left side. Display and position are your own and saved on your PC.</en><da>Hvor sædskifteplanen vises: øverst på skærmen eller i venstre side. Visning og placering er dine egne og gemmes på din pc.</da></text>
-        <text name="crp_settings_key"><en>Show / minimize key</en><da>Tast for vis / minimér</da></text>
-        <text name="crp_settings_key_value"><en>Alt + R (change in Settings &gt; Controls)</en><da>Alt + R (ændres i Indstillinger &gt; Styring)</da></text>
-        <text name="crp_settings_key_tooltip"><en>Switches the on-screen plan between full and minimized.</en><da>Skifter planen på skærmen mellem fuld og minimeret.</da></text>
-        <text name="crp_settings_grass"><en>Grass in rotation</en><da>Græs i sædskiftet</da></text>
-        <text name="crp_settings_grass_tooltip"><en>When on, grass can be added to a plan as a ley: you choose how long it stays and how often it is cut. Applies to everyone on your farm.</en><da>Når slået til kan græs lægges ind i en plan som græsmark: du vælger hvor længe den ligger og hvor tit der slås. Gælder alle på din gård.</da></text>
-        <text name="crp_settings_edit"><en>Who can edit the plan</en><da>Hvem kan redigere planen</da></text>
-        <text name="crp_settings_edit_manager"><en>Farm manager only</en><da>Kun gårdens leder</da></text>
-        <text name="crp_settings_edit_everyone"><en>Everyone on the farm</en><da>Alle på gården</da></text>
-        <text name="crp_settings_edit_tooltip"><en>Each farm has its own plans and field groups. Only the farm manager can change this setting. The server checks every change and shares it with all players.</en><da>Hver gård har sine egne planer og markgrupper. Kun gårdens leder kan ændre denne indstilling. Serveren tjekker hver ændring og deler den med alle spillere.</da></text>
-        <text name="crp_settings_editStatus"><en>Your rights</en><da>Dine rettigheder</da></text>
-        <text name="crp_settings_editStatus_tooltip"><en>Whether you can change the plans and field groups of your farm.</en><da>Om du kan ændre din gårds planer og markgrupper.</da></text>
-        <text name="crp_status_canEdit"><en>You can edit the plans</en><da>Du kan redigere planerne</da></text>
-        <text name="crp_status_managerOnly"><en>View only: only the farm manager can edit</en><da>Kun visning: kun gårdens leder kan redigere</da></text>
-        <text name="crp_spectator"><en>Join a farm to see and edit its crop rotation plans.</en><da>Gå med i en gård for at se og redigere dens sædskifteplaner.</da></text>
-        <text name="crp_on"><en>On</en><da>Til</da></text>
-        <text name="crp_off"><en>Off</en><da>Fra</da></text>
-        <text name="crp_position_top"><en>Top</en><da>Top</da></text>
-        <text name="crp_position_left"><en>Left</en><da>Venstre</da></text>
-        <text name="crp_display_full"><en>Full</en><da>Fuld</da></text>
-        <text name="crp_display_minimized"><en>Minimized</en><da>Minimeret</da></text>
-        <text name="crp_display_hidden"><en>Hidden</en><da>Skjult</da></text>
+        <text name="ui_cropRotationPlan"><en>Crop rotation plan</en><de>Fruchtfolgeplan</de><da>Sædskifteplan</da></text>
+        <text name="crp_tab_title"><en>Crop rotation plan</en><de>Fruchtfolgeplan</de><da>Sædskifteplan</da></text>
+        <text name="crp_subtab_settings"><en>Settings</en><de>Einstellungen</de><da>Indstillinger</da></text>
+        <text name="crp_subtab_plans"><en>Plans</en><de>Pläne</de><da>Planer</da></text>
+        <text name="crp_subtab_groups"><en>Field groups</en><de>Feldgruppen</de><da>Markgrupper</da></text>
+        <text name="crp_section_display"><en>Display</en><de>Anzeige</de><da>Visning</da></text>
+        <text name="crp_section_crops"><en>Crops</en><de>Feldfrüchte</de><da>Afgrøder</da></text>
+        <text name="crp_section_multiplayer"><en>Multiplayer</en><de>Mehrspieler</de><da>Multiplayer</da></text>
+        <text name="crp_settings_display"><en>Display</en><de>Anzeige</de><da>Visning</da></text>
+        <text name="crp_settings_display_tooltip"><en>Full shows every field group. Minimized shows one icon: yellow = work this month (with number of fields), green = work next month, grey = nothing to do. Where each field group is in its plan is set under Field groups.</en><de>Voll zeigt jede Feldgruppe. Minimiert zeigt ein Symbol: gelb = Arbeit in diesem Monat (mit Anzahl der Felder), grün = Arbeit im nächsten Monat, grau = nichts zu tun. Wo jede Feldgruppe in ihrem Plan steht, wird unter Feldgruppen eingestellt.</de><da>Fuld viser alle markgrupper. Minimeret viser ét ikon: gult = opgaver denne måned (med antal marker), grønt = opgaver næste måned, gråt = intet at gøre. Hvor hver markgruppe er i sin plan sættes under Markgrupper.</da></text>
+        <text name="crp_settings_position"><en>Position</en><de>Position</de><da>Placering</da></text>
+        <text name="crp_settings_position_tooltip"><en>Where the crop rotation plan is shown: at the top of the screen or on the left side. Display and position are your own and saved on your PC.</en><de>Wo der Fruchtfolgeplan angezeigt wird: oben am Bildschirm oder links. Anzeige und Position sind deine eigenen Einstellungen und werden auf deinem PC gespeichert.</de><da>Hvor sædskifteplanen vises: øverst på skærmen eller i venstre side. Visning og placering er dine egne og gemmes på din pc.</da></text>
+        <text name="crp_settings_key"><en>Show / minimize key</en><de>Taste anzeigen / minimieren</de><da>Tast for vis / minimér</da></text>
+        <text name="crp_settings_key_value"><en>Alt + R (change in Settings &gt; Controls)</en><de>Alt + R (änderbar unter Einstellungen &gt; Steuerung)</de><da>Alt + R (ændres i Indstillinger &gt; Styring)</da></text>
+        <text name="crp_settings_key_tooltip"><en>Switches the on-screen plan between full and minimized.</en><de>Schaltet den Plan auf dem Bildschirm zwischen voll und minimiert um.</de><da>Skifter planen på skærmen mellem fuld og minimeret.</da></text>
+        <text name="crp_settings_grass"><en>Grass in rotation</en><de>Gras in der Fruchtfolge</de><da>Græs i sædskiftet</da></text>
+        <text name="crp_settings_grass_tooltip"><en>When on, grass can be added to a plan as a ley: you choose how long it stays and how often it is cut. Applies to everyone on your farm.</en><de>Wenn an, kann Gras als Ackergras in einen Plan aufgenommen werden: du wählst, wie lange es bleibt und wie oft gemäht wird. Gilt für alle auf deinem Hof.</de><da>Når slået til kan græs lægges ind i en plan som græsmark: du vælger hvor længe den ligger og hvor tit der slås. Gælder alle på din gård.</da></text>
+        <text name="crp_settings_edit"><en>Who can edit the plan</en><de>Wer darf den Plan bearbeiten</de><da>Hvem kan redigere planen</da></text>
+        <text name="crp_settings_edit_manager"><en>Farm manager only</en><de>Nur der Hofverwalter</de><da>Kun gårdens leder</da></text>
+        <text name="crp_settings_edit_everyone"><en>Everyone on the farm</en><de>Alle auf dem Hof</de><da>Alle på gården</da></text>
+        <text name="crp_settings_edit_tooltip"><en>Each farm has its own plans and field groups. Only the farm manager can change this setting. The server checks every change and shares it with all players.</en><de>Jeder Hof hat eigene Pläne und Feldgruppen. Nur der Hofverwalter kann diese Einstellung ändern. Der Server prüft jede Änderung und teilt sie mit allen Spielern.</de><da>Hver gård har sine egne planer og markgrupper. Kun gårdens leder kan ændre denne indstilling. Serveren tjekker hver ændring og deler den med alle spillere.</da></text>
+        <text name="crp_settings_editStatus"><en>Your rights</en><de>Deine Rechte</de><da>Dine rettigheder</da></text>
+        <text name="crp_settings_editStatus_tooltip"><en>Whether you can change the plans and field groups of your farm.</en><de>Ob du die Pläne und Feldgruppen deines Hofes ändern kannst.</de><da>Om du kan ændre din gårds planer og markgrupper.</da></text>
+        <text name="crp_status_canEdit"><en>You can edit the plans</en><de>Du kannst die Pläne bearbeiten</de><da>Du kan redigere planerne</da></text>
+        <text name="crp_status_managerOnly"><en>View only: only the farm manager can edit</en><de>Nur ansehen: nur der Hofverwalter kann bearbeiten</de><da>Kun visning: kun gårdens leder kan redigere</da></text>
+        <text name="crp_spectator"><en>Join a farm to see and edit its crop rotation plans.</en><de>Tritt einem Hof bei, um seine Fruchtfolgepläne zu sehen und zu bearbeiten.</de><da>Gå med i en gård for at se og redigere dens sædskifteplaner.</da></text>
+        <text name="crp_on"><en>On</en><de>An</de><da>Til</da></text>
+        <text name="crp_off"><en>Off</en><de>Aus</de><da>Fra</da></text>
+        <text name="crp_position_top"><en>Top</en><de>Oben</de><da>Top</da></text>
+        <text name="crp_position_left"><en>Left</en><de>Links</de><da>Venstre</da></text>
+        <text name="crp_display_full"><en>Full</en><de>Voll</de><da>Fuld</da></text>
+        <text name="crp_display_minimized"><en>Minimized</en><de>Minimiert</de><da>Minimeret</da></text>
+        <text name="crp_display_hidden"><en>Hidden</en><de>Ausgeblendet</de><da>Skjult</da></text>
 
         <!-- Plans -->
-        <text name="crp_plans"><en>Plans</en><da>Planer</da></text>
-        <text name="crp_newPlan"><en>+ New plan</en><da>+ Ny plan</da></text>
-        <text name="crp_newPlanName"><en>Plan %d</en><da>Plan %d</da></text>
-        <text name="crp_editPlan"><en>Edit plan</en><da>Rediger plan</da></text>
-        <text name="crp_deletePlan"><en>Delete plan</en><da>Slet plan</da></text>
-        <text name="crp_deleteConfirm"><en>Click again to delete</en><da>Klik igen for at slette</da></text>
-        <text name="crp_deletePlanTip"><en>Field groups that use the plan keep their fields but get no plan.</en><da>Markgrupper der bruger planen beholder deres marker, men får ingen plan.</da></text>
-        <text name="crp_noPlans"><en>No plans yet. Click + New plan to make one.</en><da>Ingen planer endnu. Klik + Ny plan for at lave en.</da></text>
-        <text name="crp_planMeta"><en>%d years - %d field groups</en><da>%d år - %d markgrupper</da></text>
-        <text name="crp_planName"><en>Plan name</en><da>Plannavn</da></text>
-        <text name="crp_renameTip"><en>Click to rename the plan</en><da>Klik for at omdøbe planen</da></text>
-        <text name="crp_yearsInCycle"><en>Years in cycle</en><da>År i cyklus</da></text>
-        <text name="crp_view"><en>View</en><da>Visning</da></text>
-        <text name="crp_viewColumns"><en>Columns</en><da>Kolonner</da></text>
-        <text name="crp_viewRows"><en>Year rows</en><da>Årsrækker</da></text>
-        <text name="crp_yearN"><en>Year %d</en><da>År %d</da></text>
-        <text name="crp_addCrop"><en>+ Add crop</en><da>+ Tilføj afgrøde</da></text>
-        <text name="crp_sowIn"><en>Sow %s</en><da>Så %s</da></text>
-        <text name="crp_sownInYear"><en>Sown in year %d</en><da>Sået i år %d</da></text>
-        <text name="crp_harvestIn"><en>Harvest %s</en><da>Høst %s</da></text>
-        <text name="crp_harvestedInYear"><en>Harvested in year %d</en><da>Høstes i år %d</da></text>
-        <text name="crp_lastCutIn"><en>Last cut %s</en><da>Sidste slæt %s</da></text>
-        <text name="crp_lastCutInYear"><en>Last cut in year %d</en><da>Sidste slæt i år %d</da></text>
-        <text name="crp_noCropsYet"><en>No crops yet. Click Edit plan to add one.</en><da>Ingen afgrøder endnu. Klik Rediger plan for at tilføje en.</da></text>
-        <text name="crp_columnsHint"><en>Click a crop to open it in the plan editor.</en><da>Klik på en afgrøde for at åbne den i planeditoren.</da></text>
-        <text name="crp_rowsHint"><en>Bars run from sowing to harvest. A bar that reaches the edge continues in the next year's row.</en><da>Bjælkerne går fra såning til høst. En bjælke der når kanten fortsætter i næste års række.</da></text>
-        <text name="crp_statusOk"><en>Plan OK</en><da>Plan OK</da></text>
-        <text name="crp_statusCounts"><en>%d seeds - %d free months</en><da>%d afgrøder - %d ledige måneder</da></text>
-        <text name="crp_statusEmptyYears"><en>Year %s has no crops</en><da>År %s har ingen afgrøder</da></text>
-        <text name="crp_statusOverlap"><en>Crops overlap</en><da>Afgrøder overlapper</da></text>
+        <text name="crp_plans"><en>Plans</en><de>Pläne</de><da>Planer</da></text>
+        <text name="crp_newPlan"><en>+ New plan</en><de>+ Neuer Plan</de><da>+ Ny plan</da></text>
+        <text name="crp_newPlanName"><en>Plan %d</en><de>Plan %d</de><da>Plan %d</da></text>
+        <text name="crp_editPlan"><en>Edit plan</en><de>Plan bearbeiten</de><da>Rediger plan</da></text>
+        <text name="crp_deletePlan"><en>Delete plan</en><de>Plan löschen</de><da>Slet plan</da></text>
+        <text name="crp_deleteConfirm"><en>Click again to delete</en><de>Zum Löschen erneut klicken</de><da>Klik igen for at slette</da></text>
+        <text name="crp_deletePlanTip"><en>Field groups that use the plan keep their fields but get no plan.</en><de>Feldgruppen mit diesem Plan behalten ihre Felder, haben aber keinen Plan mehr.</de><da>Markgrupper der bruger planen beholder deres marker, men får ingen plan.</da></text>
+        <text name="crp_noPlans"><en>No plans yet. Click + New plan to make one.</en><de>Noch keine Pläne. Klicke auf + Neuer Plan, um einen anzulegen.</de><da>Ingen planer endnu. Klik + Ny plan for at lave en.</da></text>
+        <text name="crp_planMeta"><en>%d years - %d field groups</en><de>%d Jahre - %d Feldgruppen</de><da>%d år - %d markgrupper</da></text>
+        <text name="crp_planName"><en>Plan name</en><de>Planname</de><da>Plannavn</da></text>
+        <text name="crp_renameTip"><en>Click to rename the plan</en><de>Klicken, um den Plan umzubenennen</de><da>Klik for at omdøbe planen</da></text>
+        <text name="crp_yearsInCycle"><en>Years in cycle</en><de>Jahre im Zyklus</de><da>År i cyklus</da></text>
+        <text name="crp_view"><en>View</en><de>Ansicht</de><da>Visning</da></text>
+        <text name="crp_viewColumns"><en>Columns</en><de>Spalten</de><da>Kolonner</da></text>
+        <text name="crp_viewRows"><en>Year rows</en><de>Jahreszeilen</de><da>Årsrækker</da></text>
+        <text name="crp_yearN"><en>Year %d</en><de>Jahr %d</de><da>År %d</da></text>
+        <text name="crp_addCrop"><en>+ Add crop</en><de>+ Feldfrucht hinzufügen</de><da>+ Tilføj afgrøde</da></text>
+        <text name="crp_sowIn"><en>Sow %s</en><de>Säen %s</de><da>Så %s</da></text>
+        <text name="crp_sownInYear"><en>Sown in year %d</en><de>Gesät in Jahr %d</de><da>Sået i år %d</da></text>
+        <text name="crp_harvestIn"><en>Harvest %s</en><de>Ernte %s</de><da>Høst %s</da></text>
+        <text name="crp_harvestedInYear"><en>Harvested in year %d</en><de>Geerntet in Jahr %d</de><da>Høstes i år %d</da></text>
+        <text name="crp_lastCutIn"><en>Last cut %s</en><de>Letzter Schnitt %s</de><da>Sidste slæt %s</da></text>
+        <text name="crp_lastCutInYear"><en>Last cut in year %d</en><de>Letzter Schnitt in Jahr %d</de><da>Sidste slæt i år %d</da></text>
+        <text name="crp_noCropsYet"><en>No crops yet. Click Edit plan to add one.</en><de>Noch keine Feldfrüchte. Klicke auf Plan bearbeiten, um eine hinzuzufügen.</de><da>Ingen afgrøder endnu. Klik Rediger plan for at tilføje en.</da></text>
+        <text name="crp_columnsHint"><en>Click a crop to open it in the plan editor.</en><de>Klicke auf eine Feldfrucht, um sie im Plan-Editor zu öffnen.</de><da>Klik på en afgrøde for at åbne den i planeditoren.</da></text>
+        <text name="crp_rowsHint"><en>Bars run from sowing to harvest. A bar that reaches the edge continues in the next year's row.</en><de>Die Balken reichen von der Saat bis zur Ernte. Ein Balken, der den Rand erreicht, geht in der Zeile des nächsten Jahres weiter.</de><da>Bjælkerne går fra såning til høst. En bjælke der når kanten fortsætter i næste års række.</da></text>
+        <text name="crp_statusOk"><en>Plan OK</en><de>Plan in Ordnung</de><da>Plan OK</da></text>
+        <text name="crp_statusCounts"><en>%d seeds - %d free months</en><de>%d Saaten - %d freie Monate</de><da>%d afgrøder - %d ledige måneder</da></text>
+        <text name="crp_statusEmptyYears"><en>Year %s has no crops</en><de>Jahr %s hat keine Feldfrüchte</de><da>År %s har ingen afgrøder</da></text>
+        <text name="crp_statusOverlap"><en>Crops overlap</en><de>Feldfrüchte überschneiden sich</de><da>Afgrøder overlapper</da></text>
 
         <!-- Plan editor -->
-        <text name="crp_monthYear"><en>%s year %d</en><da>%s år %d</da></text>
-        <text name="crp_wheelHint"><en>Bars run from sowing to harvest and continue in the next row when they cross the new year. Click a dashed gap to add a seed, or a bar to remove it.</en><da>Bjælkerne går fra såning til høst og fortsætter i næste række over nytår. Klik på et stiplet hul for at tilføje en afgrøde, eller på en bjælke for at fjerne den.</da></text>
-        <text name="crp_editorFooter"><en>Changes are kept until you press Save plan.</en><da>Ændringer gemmes først når du trykker Gem plan.</da></text>
-        <text name="crp_editorHint"><en>Click a dashed gap to add a seed, or a bar to see it.</en><da>Klik på et stiplet hul for at tilføje en afgrøde, eller på en bjælke for at se den.</da></text>
-        <text name="crp_savePlan"><en>Save plan</en><da>Gem plan</da></text>
-        <text name="crp_cancel"><en>Cancel</en><da>Annuller</da></text>
-        <text name="crp_gapTip"><en>Free from %s to %s</en><da>Ledig fra %s til %s</da></text>
-        <text name="crp_barTip"><en>%s: sow %s, harvest %s</en><da>%s: så %s, høst %s</da></text>
-        <text name="crp_leyBar"><en>%s (ley, cut every %d m)</en><da>%s (græsmark, slæt hver %d. md.)</da></text>
-        <text name="crp_addSeed"><en>Add seed</en><da>Tilføj afgrøde</da></text>
-        <text name="crp_gapText"><en>Free from %s to %s. Sowing may start in the harvest month before, harvest may share the sowing month after.</en><da>Ledig fra %s til %s. Såning må starte i høstmåneden før, høst må falde i såmåneden efter.</da></text>
-        <text name="crp_monthsSub"><en>%d months</en><da>%d mdr.</da></text>
-        <text name="crp_leySub"><en>Ley, you choose how long</en><da>Græsmark, du vælger hvor længe</da></text>
-        <text name="crp_sowSub"><en>sow %s</en><da>så %s</da></text>
-        <text name="crp_noFit"><en>Does not fit this gap (%d)</en><da>Passer ikke i dette hul (%d)</da></text>
-        <text name="crp_needs"><en>needs %d months from a sowing month in %s</en><da>skal bruge %d mdr. fra en såmåned i %s</da></text>
-        <text name="crp_nothingFits"><en>No crop can grow in this gap. It stays free.</en><da>Ingen afgrøde kan gro i dette hul. Det forbliver ledigt.</da></text>
-        <text name="crp_pickCrop"><en>Pick a crop above.</en><da>Vælg en afgrøde ovenfor.</da></text>
-        <text name="crp_sowInLabel"><en>Sow in</en><da>Så i</da></text>
-        <text name="crp_keepAsLey"><en>Keep as ley for</en><da>Behold som græsmark i</da></text>
-        <text name="crp_durMonths"><en>%d months</en><da>%d måneder</da></text>
-        <text name="crp_durYear"><en>1 year</en><da>1 år</da></text>
-        <text name="crp_durYears"><en>%d years</en><da>%d år</da></text>
-        <text name="crp_cutWhen"><en>Cut when</en><da>Slå når</da></text>
-        <text name="crp_cutReady"><en>Ready to harvest</en><da>Klar til høst</da></text>
-        <text name="crp_cutFull"><en>Fully grown</en><da>Fuldt udvokset</da></text>
-        <text name="crp_cutSub"><en>Every %d growing months - about %d cuts</en><da>Hver %d. vækstmåned - ca. %d slæt</da></text>
-        <text name="crp_resultCrop"><en>%s sown %s grows %d months: harvest %s.</en><da>%s sået %s gror %d måneder: høst %s.</da></text>
-        <text name="crp_resultLey"><en>%s sown %s stays as a ley for %d months, cut every %d growing months (about %d cuts, no growth Nov-Feb). Last cut %s, then the field is free again.</en><da>%s sået %s ligger som græsmark i %d måneder, slæt hver %d. vækstmåned (ca. %d slæt, ingen vækst nov-feb). Sidste slæt %s, derefter er marken ledig igen.</da></text>
-        <text name="crp_followUps"><en>Can be sown after the harvest:</en><da>Kan sås efter høst:</da></text>
-        <text name="crp_followTip"><en>%s can be sown in %s</en><da>%s kan sås i %s</da></text>
-        <text name="crp_changeCrop"><en>Change crop</en><da>Skift afgrøde</da></text>
-        <text name="crp_scrollMore"><en>Scroll for more</en><da>Rul for mere</da></text>
-        <text name="crp_addSeedButton"><en>Add seed to plan</en><da>Tilføj afgrøde til planen</da></text>
-        <text name="crp_seedText"><en>Sow %s - harvest %s - grows %d months.</en><da>Så %s - høst %s - gror %d måneder.</da></text>
-        <text name="crp_seedLeyText"><en>Sow %s - ley for %d months - cut every %d growing months - last cut %s.</en><da>Så %s - græsmark i %d måneder - slæt hver %d. vækstmåned - sidste slæt %s.</da></text>
-        <text name="crp_removeSeed"><en>Remove seed from plan</en><da>Fjern afgrøde fra planen</da></text>
+        <text name="crp_monthYear"><en>%s year %d</en><de>%s Jahr %d</de><da>%s år %d</da></text>
+        <text name="crp_wheelHint"><en>Bars run from sowing to harvest and continue in the next row when they cross the new year. Click a dashed gap to add a seed, or a bar to remove it.</en><de>Die Balken reichen von der Saat bis zur Ernte und gehen über den Jahreswechsel in der nächsten Zeile weiter. Klicke auf eine gestrichelte Lücke, um eine Saat hinzuzufügen, oder auf einen Balken, um sie zu entfernen.</de><da>Bjælkerne går fra såning til høst og fortsætter i næste række over nytår. Klik på et stiplet hul for at tilføje en afgrøde, eller på en bjælke for at fjerne den.</da></text>
+        <text name="crp_editorFooter"><en>Changes are kept until you press Save plan.</en><de>Änderungen werden erst mit Plan speichern übernommen.</de><da>Ændringer gemmes først når du trykker Gem plan.</da></text>
+        <text name="crp_editorHint"><en>Click a dashed gap to add a seed, or a bar to see it.</en><de>Klicke auf eine gestrichelte Lücke, um eine Saat hinzuzufügen, oder auf einen Balken, um sie anzusehen.</de><da>Klik på et stiplet hul for at tilføje en afgrøde, eller på en bjælke for at se den.</da></text>
+        <text name="crp_savePlan"><en>Save plan</en><de>Plan speichern</de><da>Gem plan</da></text>
+        <text name="crp_cancel"><en>Cancel</en><de>Abbrechen</de><da>Annuller</da></text>
+        <text name="crp_gapTip"><en>Free from %s to %s</en><de>Frei von %s bis %s</de><da>Ledig fra %s til %s</da></text>
+        <text name="crp_barTip"><en>%s: sow %s, harvest %s</en><de>%s: Saat %s, Ernte %s</de><da>%s: så %s, høst %s</da></text>
+        <text name="crp_leyBar"><en>%s (ley, cut every %d m)</en><de>%s (Grünland, Schnitt alle %d M.)</de><da>%s (græsmark, slæt hver %d. md.)</da></text>
+        <text name="crp_addSeed"><en>Add seed</en><de>Saat hinzufügen</de><da>Tilføj afgrøde</da></text>
+        <text name="crp_gapText"><en>Free from %s to %s. Sowing may start in the harvest month before, harvest may share the sowing month after.</en><de>Frei von %s bis %s. Die Saat darf im Erntemonat davor beginnen, die Ernte darf in den Saatmonat danach fallen.</de><da>Ledig fra %s til %s. Såning må starte i høstmåneden før, høst må falde i såmåneden efter.</da></text>
+        <text name="crp_monthsSub"><en>%d months</en><de>%d Monate</de><da>%d mdr.</da></text>
+        <text name="crp_leySub"><en>Ley, you choose how long</en><de>Grünland, Dauer frei wählbar</de><da>Græsmark, du vælger hvor længe</da></text>
+        <text name="crp_sowSub"><en>Sow %s</en><de>Saat %s</de><da>Så %s</da></text>
+        <text name="crp_noFit"><en>Does not fit this gap (%d)</en><de>Passt nicht in diese Lücke (%d)</de><da>Passer ikke i dette hul (%d)</da></text>
+        <text name="crp_needs"><en>Needs %d months from a sowing month in %s</en><de>Braucht %d Monate ab einem Saatmonat in %s</de><da>Skal bruge %d mdr. fra en såmåned i %s</da></text>
+        <text name="crp_nothingFits"><en>No crop can grow in this gap. It stays free.</en><de>Keine Feldfrucht kann in dieser Lücke wachsen. Sie bleibt frei.</de><da>Ingen afgrøde kan gro i dette hul. Det forbliver ledigt.</da></text>
+        <text name="crp_pickCrop"><en>Pick a crop above.</en><de>Wähle oben eine Feldfrucht.</de><da>Vælg en afgrøde ovenfor.</da></text>
+        <text name="crp_sowInLabel"><en>Sow in</en><de>Säen im</de><da>Så i</da></text>
+        <text name="crp_keepAsLey"><en>Keep as ley for</en><de>Als Grünland behalten für</de><da>Behold som græsmark i</da></text>
+        <text name="crp_durMonths"><en>%d months</en><de>%d Monate</de><da>%d måneder</da></text>
+        <text name="crp_durYear"><en>1 year</en><de>1 Jahr</de><da>1 år</da></text>
+        <text name="crp_durYears"><en>%d years</en><de>%d Jahre</de><da>%d år</da></text>
+        <text name="crp_cutWhen"><en>Cut when</en><de>Mähen, wenn</de><da>Slå når</da></text>
+        <text name="crp_cutReady"><en>Ready to harvest</en><de>Erntereif</de><da>Klar til høst</da></text>
+        <text name="crp_cutFull"><en>Fully grown</en><de>Ausgewachsen</de><da>Fuldt udvokset</da></text>
+        <text name="crp_cutSub"><en>Every %d growing months - about %d cuts</en><de>Alle %d Wachstumsmonate - etwa %d Schnitte</de><da>Hver %d. vækstmåned - ca. %d slæt</da></text>
+        <text name="crp_resultCrop"><en>%s sown %s grows %d months: harvest %s.</en><de>%s gesät %s wächst %d Monate: Ernte %s.</de><da>%s sået %s gror %d måneder: høst %s.</da></text>
+        <text name="crp_resultLey"><en>%s sown %s stays as a ley for %d months, cut every %d growing months (about %d cuts, no growth Nov-Feb). Last cut %s, then the field is free again.</en><de>%s gesät %s bleibt %d Monate als Grünland, Schnitt alle %d Wachstumsmonate (etwa %d Schnitte, kein Wachstum Nov-Feb). Letzter Schnitt %s, danach ist das Feld wieder frei.</de><da>%s sået %s ligger som græsmark i %d måneder, slæt hver %d. vækstmåned (ca. %d slæt, ingen vækst nov-feb). Sidste slæt %s, derefter er marken ledig igen.</da></text>
+        <text name="crp_followUps"><en>Can be sown after the harvest:</en><de>Nach der Ernte säbar:</de><da>Kan sås efter høst:</da></text>
+        <text name="crp_followTip"><en>%s can be sown in %s</en><de>%s kann im %s gesät werden</de><da>%s kan sås i %s</da></text>
+        <text name="crp_changeCrop"><en>Change crop</en><de>Feldfrucht ändern</de><da>Skift afgrøde</da></text>
+        <text name="crp_scrollMore"><en>Scroll for more</en><de>Für mehr scrollen</de><da>Rul for mere</da></text>
+        <text name="crp_addSeedButton"><en>Add seed to plan</en><de>Saat zum Plan hinzufügen</de><da>Tilføj afgrøde til planen</da></text>
+        <text name="crp_seedText"><en>Sow %s - harvest %s - grows %d months.</en><de>Saat %s - Ernte %s - wächst %d Monate.</de><da>Så %s - høst %s - gror %d måneder.</da></text>
+        <text name="crp_seedLeyText"><en>Sow %s - ley for %d months - cut every %d growing months - last cut %s.</en><de>Saat %s - Grünland für %d Monate - Schnitt alle %d Wachstumsmonate - letzter Schnitt %s.</de><da>Så %s - græsmark i %d måneder - slæt hver %d. vækstmåned - sidste slæt %s.</da></text>
+        <text name="crp_removeSeed"><en>Remove seed from plan</en><de>Saat aus dem Plan entfernen</de><da>Fjern afgrøde fra planen</da></text>
 
         <!-- Reasons a crop cannot be used -->
-        <text name="crp_block_tree"><en>Trees and orchards are not part of a rotation</en><da>Træer og plantager indgår ikke i et sædskifte</da></text>
-        <text name="crp_block_regrows"><en>Regrows every year, not part of a rotation</en><da>Gror igen hvert år, indgår ikke i et sædskifte</da></text>
-        <text name="crp_block_meadow"><en>Permanent meadow, not part of a rotation</en><da>Permanent eng, indgår ikke i et sædskifte</da></text>
-        <text name="crp_block_paddy"><en>Needs a rice paddy field</en><da>Kræver en rismark</da></text>
-        <text name="crp_block_catchCrop"><en>Cover crop</en><da>Efterafgrøde</da></text>
-        <text name="crp_block_allYear"><en>Harvested all year</en><da>Høstes hele året</da></text>
-        <text name="crp_block_unknown"><en>No sowing and harvest time in this game</en><da>Ingen så- og høsttid i dette spil</da></text>
-        <text name="crp_block_grassOff"><en>Grass in rotation is off in Settings</en><da>Græs i sædskiftet er slået fra i Indstillinger</da></text>
-        <text name="crp_block_notOnMap"><en>This crop is not on this map</en><da>Denne afgrøde findes ikke på dette kort</da></text>
+        <text name="crp_block_tree"><en>Trees and orchards are not part of a rotation</en><de>Bäume und Plantagen gehören nicht zu einer Fruchtfolge</de><da>Træer og plantager indgår ikke i et sædskifte</da></text>
+        <text name="crp_block_regrows"><en>Regrows every year, not part of a rotation</en><de>Wächst jedes Jahr nach, gehört nicht zu einer Fruchtfolge</de><da>Gror igen hvert år, indgår ikke i et sædskifte</da></text>
+        <text name="crp_block_meadow"><en>Permanent meadow, not part of a rotation</en><de>Dauerwiese, gehört nicht zu einer Fruchtfolge</de><da>Permanent eng, indgår ikke i et sædskifte</da></text>
+        <text name="crp_block_paddy"><en>Needs a rice paddy field</en><de>Braucht ein Reisfeld</de><da>Kræver en rismark</da></text>
+        <text name="crp_block_catchCrop"><en>Cover crop</en><de>Zwischenfrucht</de><da>Efterafgrøde</da></text>
+        <text name="crp_block_allYear"><en>Harvested all year</en><de>Wird das ganze Jahr geerntet</de><da>Høstes hele året</da></text>
+        <text name="crp_block_unknown"><en>No sowing and harvest time in this game</en><de>Keine Saat- und Erntezeit in diesem Spiel</de><da>Ingen så- og høsttid i dette spil</da></text>
+        <text name="crp_block_grassOff"><en>Grass in rotation is off in Settings</en><de>Gras in der Fruchtfolge ist in den Einstellungen aus</de><da>Græs i sædskiftet er slået fra i Indstillinger</da></text>
+        <text name="crp_block_notOnMap"><en>This crop is not on this map</en><de>Diese Feldfrucht gibt es auf dieser Karte nicht</de><da>Denne afgrøde findes ikke på dette kort</da></text>
 
         <!-- Field groups -->
-        <text name="crp_colFields"><en>Fields</en><da>Marker</da></text>
-        <text name="crp_colPlan"><en>Plan</en><da>Plan</da></text>
-        <text name="crp_colPlanYear"><en>Plan year now</en><da>Planår nu</da></text>
-        <text name="crp_colCrops"><en>Crops this game year (%d)</en><da>Afgrøder i dette spilår (%d)</da></text>
-        <text name="crp_noPlan"><en>No plan</en><da>Ingen plan</da></text>
-        <text name="crp_pickPlan"><en>Pick a plan</en><da>Vælg en plan</da></text>
-        <text name="crp_newGroup"><en>+ New field group</en><da>+ Ny markgruppe</da></text>
-        <text name="crp_noGroups"><en>No field groups yet. Click + New field group, then click your fields on the right to add them.</en><da>Ingen markgrupper endnu. Klik + Ny markgruppe og klik derefter på dine marker til højre for at tilføje dem.</da></text>
-        <text name="crp_addFieldTip"><en>Add fields: click your fields on the right</en><da>Tilføj marker: klik på dine marker til højre</da></text>
-        <text name="crp_removeFieldTip"><en>Field %d: click to take it out of the group</en><da>Mark %d: klik for at tage den ud af gruppen</da></text>
-        <text name="crp_removeGroupTip"><en>Remove field group</en><da>Fjern markgruppe</da></text>
-        <text name="crp_removeGroupConfirm"><en>Click again to remove the field group</en><da>Klik igen for at fjerne markgruppen</da></text>
-        <text name="crp_scrollHint"><en>%d-%d of %d (scroll)</en><da>%d-%d af %d (rul)</da></text>
-        <text name="crp_yourFields"><en>Your fields</en><da>Dine marker</da></text>
-        <text name="crp_yourFieldsText"><en>Fields your farm owns, read from the game. Grey ones are not in any group yet.</en><da>Marker din gård ejer, læst fra spillet. Grå marker er ikke i nogen gruppe endnu.</da></text>
-        <text name="crp_addFieldHint"><en>Click a field to add it to the selected group (it leaves any other group). Click it again to take it out.</en><da>Klik på en mark for at tilføje den til den valgte gruppe (den forlader en anden gruppe). Klik igen for at tage den ud.</da></text>
-        <text name="crp_fieldInGroup"><en>In a field group</en><da>I en markgruppe</da></text>
-        <text name="crp_fieldFree"><en>Not in a group</en><da>Ikke i en gruppe</da></text>
-        <text name="crp_noOwnedFields"><en>Your farm owns no fields.</en><da>Din gård ejer ingen marker.</da></text>
-        <text name="crp_moreFields"><en>+%d more</en><da>+%d flere</da></text>
-        <text name="crp_planYearHelp"><en>"Plan year now" is where the group is in its plan this year. It moves on by itself every new year. Groups in the same plan at different plan years spread the crops, so the mills get every crop every year.</en><da>"Planår nu" er hvor gruppen er i sin plan i år. Det rykker selv videre hvert nyt år. Grupper i samme plan på forskellige planår spreder afgrøderne, så møllerne får alle afgrøder hvert år.</da></text>
+        <text name="crp_colFields"><en>Fields</en><de>Felder</de><da>Marker</da></text>
+        <text name="crp_colPlan"><en>Plan</en><de>Plan</de><da>Plan</da></text>
+        <text name="crp_colPlanYear"><en>Plan year now</en><de>Planjahr jetzt</de><da>Planår nu</da></text>
+        <text name="crp_colCrops"><en>Crops this game year (%d)</en><de>Feldfrüchte in diesem Spieljahr (%d)</de><da>Afgrøder i dette spilår (%d)</da></text>
+        <text name="crp_noPlan"><en>No plan</en><de>Kein Plan</de><da>Ingen plan</da></text>
+        <text name="crp_pickPlan"><en>Pick a plan</en><de>Plan wählen</de><da>Vælg en plan</da></text>
+        <text name="crp_newGroup"><en>+ New field group</en><de>+ Neue Feldgruppe</de><da>+ Ny markgruppe</da></text>
+        <text name="crp_noGroups"><en>No field groups yet. Click + New field group, then click your fields on the right to add them.</en><de>Noch keine Feldgruppen. Klicke auf + Neue Feldgruppe und dann rechts auf deine Felder, um sie hinzuzufügen.</de><da>Ingen markgrupper endnu. Klik + Ny markgruppe og klik derefter på dine marker til højre for at tilføje dem.</da></text>
+        <text name="crp_addFieldTip"><en>Add fields: click your fields on the right</en><de>Felder hinzufügen: rechts auf deine Felder klicken</de><da>Tilføj marker: klik på dine marker til højre</da></text>
+        <text name="crp_removeFieldTip"><en>Field %d: click to take it out of the group</en><de>Feld %d: klicken, um es aus der Gruppe zu nehmen</de><da>Mark %d: klik for at tage den ud af gruppen</da></text>
+        <text name="crp_removeGroupTip"><en>Remove field group</en><de>Feldgruppe entfernen</de><da>Fjern markgruppe</da></text>
+        <text name="crp_removeGroupConfirm"><en>Click again to remove the field group</en><de>Zum Entfernen der Feldgruppe erneut klicken</de><da>Klik igen for at fjerne markgruppen</da></text>
+        <text name="crp_scrollHint"><en>%d-%d of %d (scroll)</en><de>%d-%d von %d (scrollen)</de><da>%d-%d af %d (rul)</da></text>
+        <text name="crp_yourFields"><en>Your fields</en><de>Deine Felder</de><da>Dine marker</da></text>
+        <text name="crp_yourFieldsText"><en>Fields your farm owns, read from the game. Grey ones are not in any group yet.</en><de>Felder, die dein Hof besitzt, aus dem Spiel gelesen. Graue Felder sind noch in keiner Gruppe.</de><da>Marker din gård ejer, læst fra spillet. Grå marker er ikke i nogen gruppe endnu.</da></text>
+        <text name="crp_addFieldHint"><en>Click a field to add it to the selected group (it leaves any other group). Click it again to take it out.</en><de>Klicke auf ein Feld, um es der gewählten Gruppe hinzuzufügen (es verlässt jede andere Gruppe). Erneut klicken nimmt es wieder heraus.</de><da>Klik på en mark for at tilføje den til den valgte gruppe (den forlader en anden gruppe). Klik igen for at tage den ud.</da></text>
+        <text name="crp_fieldInGroup"><en>In a field group</en><de>In einer Feldgruppe</de><da>I en markgruppe</da></text>
+        <text name="crp_fieldFree"><en>Not in a group</en><de>In keiner Gruppe</de><da>Ikke i en gruppe</da></text>
+        <text name="crp_noOwnedFields"><en>Your farm owns no fields.</en><de>Dein Hof besitzt keine Felder.</de><da>Din gård ejer ingen marker.</da></text>
+        <text name="crp_moreFields"><en>+%d more</en><de>+%d weitere</de><da>+%d flere</da></text>
+        <text name="crp_planYearHelp"><en>"Plan year now" is where the group is in its plan this year. It moves on by itself every new year. Groups in the same plan at different plan years spread the crops, so the mills get every crop every year.</en><de>"Planjahr jetzt" ist die Stelle, an der die Gruppe dieses Jahr in ihrem Plan steht. Es rückt jedes neue Jahr von selbst weiter. Gruppen im selben Plan mit verschiedenen Planjahren verteilen die Feldfrüchte, sodass die Mühlen jedes Jahr jede Frucht bekommen.</de><da>"Planår nu" er hvor gruppen er i sin plan i år. Det rykker selv videre hvert nyt år. Grupper i samme plan på forskellige planår spreder afgrøderne, så møllerne får alle afgrøder hvert år.</da></text>
 
-        <text name="crp_month_1"><en>Jan</en><da>jan</da></text>
-        <text name="crp_month_2"><en>Feb</en><da>feb</da></text>
-        <text name="crp_month_3"><en>Mar</en><da>mar</da></text>
-        <text name="crp_month_4"><en>Apr</en><da>apr</da></text>
-        <text name="crp_month_5"><en>May</en><da>maj</da></text>
-        <text name="crp_month_6"><en>Jun</en><da>jun</da></text>
-        <text name="crp_month_7"><en>Jul</en><da>jul</da></text>
-        <text name="crp_month_8"><en>Aug</en><da>aug</da></text>
-        <text name="crp_month_9"><en>Sep</en><da>sep</da></text>
-        <text name="crp_month_10"><en>Oct</en><da>okt</da></text>
-        <text name="crp_month_11"><en>Nov</en><da>nov</da></text>
-        <text name="crp_month_12"><en>Dec</en><da>dec</da></text>
+        <text name="crp_month_1"><en>Jan</en><de>Jan</de><da>Jan</da></text>
+        <text name="crp_month_2"><en>Feb</en><de>Feb</de><da>Feb</da></text>
+        <text name="crp_month_3"><en>Mar</en><de>Mär</de><da>Mar</da></text>
+        <text name="crp_month_4"><en>Apr</en><de>Apr</de><da>Apr</da></text>
+        <text name="crp_month_5"><en>May</en><de>Mai</de><da>Maj</da></text>
+        <text name="crp_month_6"><en>Jun</en><de>Jun</de><da>Jun</da></text>
+        <text name="crp_month_7"><en>Jul</en><de>Jul</de><da>Jul</da></text>
+        <text name="crp_month_8"><en>Aug</en><de>Aug</de><da>Aug</da></text>
+        <text name="crp_month_9"><en>Sep</en><de>Sep</de><da>Sep</da></text>
+        <text name="crp_month_10"><en>Oct</en><de>Okt</de><da>Okt</da></text>
+        <text name="crp_month_11"><en>Nov</en><de>Nov</de><da>Nov</da></text>
+        <text name="crp_month_12"><en>Dec</en><de>Dez</de><da>Dec</da></text>
     </l10n>
 </modDesc>

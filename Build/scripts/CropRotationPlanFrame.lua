@@ -45,6 +45,21 @@ local function setImage(element, filename, size)
     end
 end
 
+-- Removes every occurrence of item from list; true if it was there
+local function removeFromList(list, item)
+    if type(list) ~= "table" then
+        return false
+    end
+    local found = false
+    for i = #list, 1, -1 do
+        if list[i] == item then
+            table.remove(list, i)
+            found = true
+        end
+    end
+    return found
+end
+
 -- Moves item so it comes directly before anchor in list (at the end if anchor is not in it).
 -- getElement maps a list entry to the element it stands for (default: the entry itself).
 local function moveBefore(list, item, anchor, getElement)
@@ -147,21 +162,54 @@ function CropRotationPlanFrame.uninstall()
     end
     CropRotationPlanFrame.instance = nil
 
+    -- Quitting a savegame logged TabbedMenu.lua:285 "attempt to index nil with 'iconFilename'"
+    -- (GitHub issue #2): the menu's tab list still had our page after its tab was gone.
+    -- TabbedMenu:unregisterPage finds the page through pageTypeControllers[class] and only
+    -- removes it when that lookup works, so every list the page was added to is cleaned here
+    -- directly, and the info line in the log tells which case happened.
     local menu = g_inGameMenu
     if menu ~= nil then
+        local byClass = false
         if menu.unregisterPage ~= nil then
-            menu:unregisterPage(CropRotationPlanFrame)
+            local class = CropRotationPlanFrame
+            if frame.class ~= nil then
+                class = frame:class()
+            end
+            byClass = menu:unregisterPage(class) == true
         end
+        local leftover = removeFromList(menu.pageFrames, frame)
+        removeFromList(menu.enabledPages, frame)
+        for _, map in ipairs({ menu.pageTabs, menu.pageRoots, menu.pageEnablingPredicates }) do
+            if type(map) == "table" then
+                map[frame] = nil
+            end
+        end
+        if type(menu.pageTypeControllers) == "table" then
+            for key, controller in pairs(menu.pageTypeControllers) do
+                if controller == frame then
+                    menu.pageTypeControllers[key] = nil
+                end
+            end
+        end
+        if menu.currentPage == frame then
+            menu.currentPage = nil
+        end
+
         if menu.pagingElement ~= nil then
             menu.pagingElement:removeElement(frame)
             menu.pagingElement:updatePageMapping()
         end
-        -- Drop our tab from the tab list too; v1.3.1 left it there and the click that quit
-        -- the savegame then failed in TabbedMenu.lua:285 'iconFilename' (log 2026-10-30)
         if menu.rebuildTabList ~= nil then
             menu:rebuildTabList()
         end
+        -- The menu reopens on the page it was closed on; that index may now be past the end
+        if type(menu.restorePageIndex) == "number" and type(menu.enabledPages) == "table" and menu.restorePageIndex > #menu.enabledPages then
+            menu.restorePageIndex = 1
+            menu.restorePageScrollOffset = 0
+        end
         menu.pageCropRotationPlan = nil
+        Logging.info("[CropRotationPlan] Menu tab removed (unregistered by class: %s, left in page list: %s, menu open: %s)",
+            tostring(byClass), tostring(leftover), tostring(g_gui ~= nil and g_gui:getIsGuiVisible()))
     end
     frame:delete()
     if g_gui ~= nil and g_gui.frames ~= nil then
