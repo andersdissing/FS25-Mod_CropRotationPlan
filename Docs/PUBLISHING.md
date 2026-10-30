@@ -46,7 +46,7 @@ You: self-test with TestRunner  ->  Upload (New)  ->  Pending  ->  Data check (G
 | **EN and DE texts** for every UI text (8.2) and a DE description that is not a copy of EN (5.1, 7.2) | Done (v2.3) | EN, DE and DA for all texts, title and description; `tests/check_static.py` fails if one is missing. A German speaker should proofread. |
 | Mod icon `icon_*.dds`, **256x256, BC1, no mipmaps, GIANTS template background**, in the zip root (5.1) | Half done (v2.3) | 256x256 BC1 without mipmaps. Still missing: the GIANTS **template background** (download it from the upload page's Data section and put our art on it). |
 | No logos, watermarks, links, credits in icon, screenshots, description (5.1) | OK | Only contributors at the end of the description are allowed. |
-| At least 3 screenshots, first without text and HUD, English text (5.1) | To do | See `image-task.md` (shots 1, 2, 7). |
+| At least 3 screenshots, first without text and HUD, English text (5.1) | To do | See `image-task.md` (shots 1, 2, 3). |
 | Log file free of errors and warnings (7.1) | Fix to verify (v2.3) | Issue #2: the uninstall now removes the page from every menu list and logs `[CropRotationPlan] Menu tab removed (...)`. Quit a savegame from the menu and check the log. |
 | Zip contains only needed files (7.5) | OK | `.lua`, `.xml`, `.dds` and a README (allowed). |
 | Custom UI works at 4:3, 16:9, 16:10, 21:9 (8.2) | **Not tested** | `pwsh -File tools\screen-shape.ps1 4:3` (also `16:10`, `21:9`, `32:9`) sets a game window of that shape; `-Restore` puts your setting back. |
@@ -62,5 +62,5 @@ You: self-test with TestRunner  ->  Upload (New)  ->  Pending  ->  Data check (G
 5. Proofread the German texts.
 6. Check `descVersion` again after the next game patch.
 7. Run TestRunner on `Build/` until it is clean.
-8. Screenshots (image-task.md).
+8. Screenshots (image-task.md, 6 shots).
 9. Release on GitHub (`tools/release.ps1`), then upload that zip to the ModHub.
