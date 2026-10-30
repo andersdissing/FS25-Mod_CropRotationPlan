@@ -141,6 +141,11 @@ function CropRotationPlanFrame.uninstall()
             menu.pagingElement:removeElement(frame)
             menu.pagingElement:updatePageMapping()
         end
+        -- Drop our tab from the tab list too; v1.3.1 left it there and the click that quit
+        -- the savegame then failed in TabbedMenu.lua:285 'iconFilename' (log 2026-10-30)
+        if menu.rebuildTabList ~= nil then
+            menu:rebuildTabList()
+        end
         menu.pageCropRotationPlan = nil
     end
     frame:delete()
