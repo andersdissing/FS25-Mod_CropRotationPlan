@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="105">
     <author>Anders Dissing</author>
-    <version>1.3.1.0</version>
+    <version>1.3.2.0</version>
     <title>
         <en>Crop Rotation Plan</en>
         <da>Sædskifteplan</da>
@@ -53,6 +53,10 @@ Konsol: crpSetStartYear <år>, crpReloadConfig]]></da>
         <text name="crp_footerUnset"><en>Start year not set, using game year %d. Set it in the menu (Esc) &gt; Crop rotation plan</en><da>Startår ikke sat, bruger spilår %d. Sæt det i menuen (Esc) &gt; Sædskifteplan</da></text>
         <text name="ui_cropRotationPlan"><en>Crop rotation plan</en><da>Sædskifteplan</da></text>
         <text name="crp_tab_title"><en>Crop rotation plan</en><da>Sædskifteplan</da></text>
+        <text name="crp_subtab_settings"><en>Settings</en><da>Indstillinger</da></text>
+        <text name="crp_subtab_plans"><en>Plans</en><da>Planer</da></text>
+        <text name="crp_subtab_groups"><en>Field groups</en><da>Markgrupper</da></text>
+        <text name="crp_comingSoon"><en>Coming in version 2.0</en><da>Kommer i version 2.0</da></text>
         <text name="crp_section_plan"><en>Plan</en><da>Plan</da></text>
         <text name="crp_section_display"><en>Display</en><da>Visning</da></text>
         <text name="crp_section_file"><en>Plan file</en><da>Planfil</da></text>

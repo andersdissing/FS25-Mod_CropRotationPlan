@@ -1,8 +1,10 @@
 -- CropRotationPlanFrame.lua
--- Own tab in the in-game menu (Esc) with the mod's settings:
---   Plan:    start year (cycle year 1)
---   Display: full / minimized / hidden, position top / left
---   File:    status of cropRotationPlan.xml (re-read every time the tab opens)
+-- Own tab in the in-game menu (Esc), placed directly above the base game Settings tab.
+-- Three sub-tabs:
+--   Settings:     start year (cycle year 1), display full / minimized / hidden,
+--                 position top / left, status of cropRotationPlan.xml (re-read every time the tab opens)
+--   Plans:        placeholder until v2.0
+--   Field groups: placeholder until v2.0
 --
 -- The page is added to the in-game menu when the savegame loads and removed again
 -- when it is closed.
@@ -10,6 +12,13 @@
 CropRotationPlanFrame = {}
 CropRotationPlanFrame.GUI_NAME = "CropRotationPlanFrame"
 CropRotationPlanFrame.YEARS_AHEAD = 10
+
+CropRotationPlanFrame.SUB_PAGE = {
+    SETTINGS = 1,
+    PLANS = 2,
+    GROUPS = 3
+}
+CropRotationPlanFrame.SUB_PAGE_TEXTS = { "crp_subtab_settings", "crp_subtab_plans", "crp_subtab_groups" }
 
 local CropRotationPlanFrame_mt = Class(CropRotationPlanFrame, TabbedMenuFrameElement)
 
@@ -23,8 +32,37 @@ local function setText(element, text)
     end
 end
 
+-- Moves item so it comes directly before anchor in list (at the end if anchor is not in it).
+-- getElement maps a list entry to the element it stands for (default: the entry itself).
+local function moveBefore(list, item, anchor, getElement)
+    if list == nil or anchor == nil then
+        return
+    end
+    getElement = getElement or function(entry) return entry end
+
+    local entry = nil
+    for i = 1, #list do
+        if getElement(list[i]) == item then
+            entry = table.remove(list, i)
+            break
+        end
+    end
+    if entry == nil then
+        return
+    end
+
+    for i = 1, #list do
+        if getElement(list[i]) == anchor then
+            table.insert(list, i, entry)
+            return
+        end
+    end
+    table.insert(list, entry)
+end
+
 function CropRotationPlanFrame.new(target, customMt)
     local self = TabbedMenuFrameElement.new(target, customMt or CropRotationPlanFrame_mt)
+    self.currentSubPage = CropRotationPlanFrame.SUB_PAGE.SETTINGS
     return self
 end
 
@@ -34,7 +72,9 @@ end
 
 -- The frame itself is added as a child of the menu's paging element (that is how the
 -- page gets an id the menu can look up), then registered as page with a tab.
--- Same approach as Courseplay's CpGuiUtil.fixInGameMenuPage.
+-- Same approach as Courseplay's CpGuiUtil.fixInGameMenuPage and AdvancedDamageSystem's
+-- ADS_Main.addShopMenuPage, including moving the page in the paging element and in
+-- pageFrames so the tab sits directly above the base game Settings tab.
 -- (TabbedMenu:addPage registers the frame's root element as page instead, which makes
 -- the menu fail to find the page: "PagingElement ... attempt to index nil with 'disabled'".)
 function CropRotationPlanFrame.install(modDirectory)
@@ -58,15 +98,29 @@ function CropRotationPlanFrame.install(modDirectory)
     frame.elements[1].title = t("crp_tab_title")
     frame.modDirectory = modDirectory
 
+    -- The base game Settings page; the tab goes directly above it. nil = last, as before.
+    local anchor = menu.pageSettings
+    if anchor == nil then
+        Logging.warning("[CropRotationPlan] Settings page not found, tab added at the end")
+    end
+
     menu.pageCropRotationPlan = frame
     menu.pagingElement:addElement(frame)
+    moveBefore(menu.pagingElement.elements, frame, anchor)
+    moveBefore(menu.pagingElement.pages, frame, anchor, function(page) return page.element end)
     menu.pagingElement:updateAbsolutePosition()
     menu.pagingElement:updatePageMapping()
 
     menu:registerPage(frame, nil, nil)
     local uvs = GuiUtils.getUVs({ 0, 0, 256, 256 }, { 256, 256 })
     menu:addPageTab(frame, modDirectory .. "icon_minimized.dds", uvs)
+    moveBefore(menu.pageFrames, frame, anchor)
+    if menu.rebuildTabList ~= nil then
+        menu:rebuildTabList()
+    end
     frame:updateAbsolutePosition()
+
+    frame:initializeSubPages()
 
     CropRotationPlanFrame.instance = frame
 end
@@ -99,6 +153,27 @@ end
 -- Page
 ---------------------------------------------------------------------------
 
+-- Sub-tab bar: texts on the tab buttons, and one entry per sub-tab in the paging option
+-- (that is what the gamepad shoulder buttons step through). As Courseplay's CpGlobalSettingsFrame.
+function CropRotationPlanFrame:initializeSubPages()
+    self.subPages = { self.subPageSettings, self.subPagePlans, self.subPageGroups }
+    self.subTabs = { self.tabSettings, self.tabPlans, self.tabGroups }
+
+    for i, key in ipairs(CropRotationPlanFrame.SUB_PAGE_TEXTS) do
+        setText(self.subTabs[i], t(key))
+        if self.subCategoryPaging ~= nil then
+            self.subCategoryPaging:addText(tostring(i))
+        end
+    end
+
+    if self.subCategoryBox ~= nil then
+        self.subCategoryBox:invalidateLayout()
+        if self.subCategoryPaging ~= nil and self.subCategoryBox.maxFlowSize ~= nil then
+            self.subCategoryPaging:setSize(self.subCategoryBox.maxFlowSize + 140 * g_pixelSizeScaledX)
+        end
+    end
+end
+
 function CropRotationPlanFrame:onFrameOpen()
     CropRotationPlanFrame:superClass().onFrameOpen(self)
 
@@ -110,8 +185,63 @@ function CropRotationPlanFrame:onFrameOpen()
 
     if self.settingsLayout ~= nil then
         self.settingsLayout:invalidateLayout()
-        if FocusManager ~= nil and self.startYearOption ~= nil then
-            FocusManager:setFocus(self.startYearOption)
+    end
+    self:updateRowColors()
+    self:updateSubCategoryPages(self.currentSubPage)
+end
+
+-- Called by the paging option (gamepad shoulder buttons) and by the tab buttons.
+function CropRotationPlanFrame:updateSubCategoryPages(state)
+    if self.subPages == nil or self.subPages[state] == nil then
+        return
+    end
+    self.currentSubPage = state
+
+    for i, page in ipairs(self.subPages) do
+        if page ~= nil then
+            page:setVisible(i == state)
+        end
+        if self.subTabs[i] ~= nil then
+            self.subTabs[i]:setSelected(i == state)
+        end
+    end
+    if self.subCategoryPaging ~= nil then
+        self.subCategoryPaging:setState(state, false)
+    end
+
+    if FocusManager ~= nil and state == CropRotationPlanFrame.SUB_PAGE.SETTINGS and self.startYearOption ~= nil then
+        FocusManager:setFocus(self.startYearOption)
+    end
+end
+
+function CropRotationPlanFrame:onClickTabSettings()
+    self:updateSubCategoryPages(CropRotationPlanFrame.SUB_PAGE.SETTINGS)
+end
+
+function CropRotationPlanFrame:onClickTabPlans()
+    self:updateSubCategoryPages(CropRotationPlanFrame.SUB_PAGE.PLANS)
+end
+
+function CropRotationPlanFrame:onClickTabGroups()
+    self:updateSubCategoryPages(CropRotationPlanFrame.SUB_PAGE.GROUPS)
+end
+
+-- The row profile (fs25_multiTextOptionContainer) is white; the base game settings page
+-- colours the rows in Lua with alternating dark colours, starting again after each section
+-- header. Without this the rows render white and the white text cannot be read (v1.3.1).
+-- Same as FS25_AutoDrive's ADSettingsPage and FS25_AdvancedDamageSystem's settings page.
+function CropRotationPlanFrame:updateRowColors()
+    if self.settingsLayout == nil or InGameMenuSettingsFrame == nil or InGameMenuSettingsFrame.COLOR_ALTERNATING == nil then
+        return
+    end
+
+    local isEven = false
+    for _, element in ipairs(self.settingsLayout.elements) do
+        if element.name == "sectionHeader" then
+            isEven = false
+        elseif element.setImageColor ~= nil then
+            element:setImageColor(nil, unpack(InGameMenuSettingsFrame.COLOR_ALTERNATING[isEven]))
+            isEven = not isEven
         end
     end
 end
@@ -121,6 +251,9 @@ function CropRotationPlanFrame:updateTexts()
     if self.headerIcon ~= nil and self.headerIcon.setImageFilename ~= nil and self.modDirectory ~= nil then
         self.headerIcon:setImageFilename(self.modDirectory .. "icon_minimized.dds")
     end
+
+    setText(self.plansPlaceholder, t("crp_comingSoon"))
+    setText(self.groupsPlaceholder, t("crp_comingSoon"))
 
     setText(self.sectionPlan, t("crp_section_plan"))
     setText(self.sectionDisplay, t("crp_section_display"))

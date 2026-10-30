@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!-- In-game menu page (Esc) for FS25_CropRotationPlan. Uses only base game FS25 GUI profiles. -->
+<!-- In-game menu page (Esc) for FS25_CropRotationPlan. Uses only base game FS25 GUI profiles.
+     Layout follows the base game / Courseplay / AdvancedDamageSystem sub-category pages:
+     header, sub-tab bar (Settings, Plans, Field groups), one container per sub-tab.
+     Row background colours are set in Lua (CropRotationPlanFrame:updateRowColors), like the
+     base game settings page does; without that the rows render white. -->
 <GUI name="cropRotationPlan">
     <GuiElement profile="fs25_menuContainer" name="cropRotationPlan">
         <GuiElement profile="fs25_menuHeaderPanel">
@@ -9,7 +13,22 @@
             <Text profile="fs25_menuHeaderTitle" id="headerTitle"/>
         </GuiElement>
 
-        <GuiElement profile="fs25_subCategorySelectorTabbedContainer">
+        <BoxLayout profile="fs25_subCategorySelectorTabbedBox" id="subCategoryBox">
+            <Button profile="fs25_subCategorySelectorTabbedTab" id="tabSettings" onClick="onClickTabSettings">
+                <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+            </Button>
+            <Button profile="fs25_subCategorySelectorTabbedTab" id="tabPlans" onClick="onClickTabPlans">
+                <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+            </Button>
+            <Button profile="fs25_subCategorySelectorTabbedTab" id="tabGroups" onClick="onClickTabGroups">
+                <ThreePartBitmap profile="fs25_subCategorySelectorTabbedTabBg" name="background"/>
+            </Button>
+        </BoxLayout>
+        <ThreePartBitmap profile="fs25_lineSeparatorTopHighlighted" position="0px -57px"/>
+        <MultiTextOption profile="fs25_subCategorySelectorTabbed" id="subCategoryPaging" position="0px -10px" onClick="updateSubCategoryPages"/>
+
+        <!-- Sub-tab 1: Settings -->
+        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPageSettings">
             <ScrollingLayout profile="fs25_settingsLayout" id="settingsLayout" bottomClipperElementName="bottomClipper">
 
                 <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="sectionPlan"/>
@@ -49,6 +68,16 @@
             </ScrollingLayout>
             <Bitmap profile="fs25_settingsTooltipSeparator" name="separator"/>
             <Bitmap profile="fs25_stopClipper" name="bottomClipper"/>
+        </GuiElement>
+
+        <!-- Sub-tab 2: Plans (v2.0) -->
+        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPagePlans">
+            <Text profile="fs25_settingsNoPermissionText" id="plansPlaceholder"/>
+        </GuiElement>
+
+        <!-- Sub-tab 3: Field groups (v2.0) -->
+        <GuiElement profile="fs25_subCategorySelectorTabbedContainer" id="subPageGroups">
+            <Text profile="fs25_settingsNoPermissionText" id="groupsPlaceholder"/>
         </GuiElement>
     </GuiElement>
 </GUI>

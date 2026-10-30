@@ -23,7 +23,7 @@ with `en` and `da`.
 | Alt+R full/minimized | Listed in the F1 help list in game; pressing it not yet reported. |
 | Position top/left | Built (top default: x=0.20, topY=0.99). Not yet seen in game. |
 | Plan from XML (`modSettings/FS25_CropRotationPlan/cropRotationPlan.xml`) | Built and unit-tested; to be replaced by savegame storage + editor in v2. |
-| Own tab in Esc menu | Registered (v1.3.1, Courseplay method) and shows, BUT rows render white with unreadable text, and the tab is at the end instead of above Settings. Screenshot `docs/screenshots/2026-10-30_ingame_tab_v1.3.1.png`. |
+| Own tab in Esc menu | v1.3.1 showed white rows and sat last. v1.3.2 (not yet tested in game): rows coloured in Lua with `InGameMenuSettingsFrame.COLOR_ALTERNATING` (the row profile is white by default; FS25_AutoDrive and FS25_AdvancedDamageSystem do the same), page moved before `g_inGameMenu.pageSettings` in `pagingElement.elements`, `pagingElement.pages` and `pageFrames` + `rebuildTabList`, sub-tab bar Settings / Plans / Field groups (Plans and Field groups show "Coming in version 2.0"). |
 | Multiplayer | Not supported (`<multiplayer supported="false"/>`). |
 
 Nothing in v1.x has been checked with GIANTS TestRunner.
