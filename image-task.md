@@ -36,6 +36,21 @@ Three of them (marked **ModHub**) are also the screenshots for the ModHub upload
 | 11 | `11_hud_left.png` (optional) | The full plan in **Left** position. | Settings: Position Left. |
 | 12 | `12_editor_hover_reason.png` (optional) | A greyed crop in the editor with its tooltip ("Needs a rice paddy field", "Trees and orchards ..."). | Hover a grey icon under "Does not fit this gap". |
 
+**Minimum:** shots 1, 2 and 7 (ModHub). The rest are for the README and can come later.
+
+## Screen-shape check (not for the README)
+
+Three screenshots per shape, for 4:3, 16:10 and 21:9 (32:9 optional). Set the shape with
+`pwsh -File tools\screen-shape.ps1 4:3` (game closed), restore with `-Restore`.
+
+| # | What | File |
+|---|---|---|
+| 1 | On-screen plan, Full, Top, a month with a yellow **Now:** | `Docs/screenshots/shapes/shape_4-3_1.png` |
+| 2 | Plan editor: gap selected, crop picked, sow buttons and result visible | `Docs/screenshots/shapes/shape_4-3_2.png` |
+| 3 | Field groups with one group's **+** on (Your fields panel visible) | `Docs/screenshots/shapes/shape_4-3_3.png` |
+
+Same names with `16-10`, `21-9` (and `32-9`).
+
 ## Rules for the ModHub shots (1, 2, 7)
 
 - No logos, watermarks, links, version numbers or white backgrounds.
