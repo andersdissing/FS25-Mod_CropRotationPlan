@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--
+  Sædskifteplan for FS25_CropRotationPlan.
+
+  Moddet skriver indholdet af denne fil (uden kommentarerne) til
+    Documents\My Games\FarmingSimulator2025\modSettings\FS25_CropRotationPlan\cropRotationPlan.xml
+  første gang det kører. Ret i den fil, ikke i denne. Slet den for at få standardplanen igen.
+  Ændringer læses når savegamet indlæses (eller med konsolkommandoen crpReloadConfig).
+
+  Måneder: 1 = januar ... 12 = december. Skriv flere med mellemrum ("8 9") eller som interval ("4-7").
+-->
+<cropRotationPlanConfig version="1">
+
+    <!-- Afgrødekalender: hvornår afgrøden kan sås og høstes (fra FS25-wikien).
+         Bruges når en afgrøde i en plan ikke selv angiver sow/harvest. -->
+    <crops>
+        <crop name="Barley"  sow="9-10" harvest="6-8"/>
+        <crop name="Wheat"   sow="9-10" harvest="7-8"/>
+        <crop name="Oats"    sow="3-4"  harvest="7-8"/>
+        <crop name="Sorghum" sow="4-5"  harvest="8-9"/>
+        <crop name="Canola"  sow="8-9"  harvest="7-8"/>
+        <crop name="Peas"    sow="3-4"  harvest="7-9"/>
+        <crop name="Carrots" sow="4-7"  harvest="8-11"/>
+    </crops>
+
+    <!-- Sædplaner. years = antal år i cyklussen, og der skal være lige så mange <year>.
+         Hver <year> lister afgrøderne på marken det år i rækkefølge.
+         Hver linje har de måneder der sker DET år:
+           sow="..."      afgrøden sås dette år
+           harvest="..."  afgrøden høstes dette år
+         En afgrøde der sås i efteråret og høstes året efter (fx Wheat), står sidst i ét år med kun sow
+         og først i næste år med kun harvest.
+         Udelader du sow/harvest, bruges månederne fra afgrødekalenderen ovenfor. -->
+    <plans>
+        <plan name="4-årig cyklus" years="4">
+            <year>
+                <crop name="Barley"  harvest="6"/>
+                <crop name="Carrots" sow="6 7" harvest="10"/>
+                <crop name="Wheat"   sow="10"/>
+            </year>
+            <year>
+                <crop name="Wheat"   harvest="7 8"/>
+                <crop name="Canola"  sow="8 9"/>
+            </year>
+            <year>
+                <crop name="Canola"  harvest="7"/>
+                <crop name="Carrots" sow="7" harvest="11"/>
+            </year>
+            <year>
+                <crop name="Peas"    sow="3" harvest="7"/>
+                <crop name="Barley"  sow="9"/>
+            </year>
+        </plan>
+
+        <plan name="2-årig cyklus" years="2">
+            <year>
+                <crop name="Canola"  harvest="7"/>
+                <crop name="Carrots" sow="7" harvest="11"/>
+            </year>
+            <year>
+                <crop name="Peas"    sow="3" harvest="7"/>
+                <crop name="Canola"  sow="8 9"/>
+            </year>
+        </plan>
+    </plans>
+
+    <!-- Sammenlagte marker. fields = marknumre, plan = navnet på en plan ovenfor,
+         startPlanYear = hvilket år i planen gruppen er i, når cyklusår 1 starter.
+         Grupper i samme plan med forskelligt startPlanYear fordeler afgrøderne over årene. -->
+    <fieldGroups>
+        <fieldGroup fields="3 4 5" plan="4-årig cyklus" startPlanYear="1"/>
+        <fieldGroup fields="6 7"   plan="4-årig cyklus" startPlanYear="2"/>
+        <fieldGroup fields="8"     plan="4-årig cyklus" startPlanYear="4"/>
+        <fieldGroup fields="23 25" plan="4-årig cyklus" startPlanYear="3"/>
+        <fieldGroup fields="76"    plan="2-årig cyklus" startPlanYear="1"/>
+        <fieldGroup fields="77"    plan="2-årig cyklus" startPlanYear="2"/>
+    </fieldGroups>
+</cropRotationPlanConfig>

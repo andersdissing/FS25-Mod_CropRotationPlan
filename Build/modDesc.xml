@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<modDesc descVersion="105">
+    <author>Anders Dissing</author>
+    <version>1.3.1.0</version>
+    <title>
+        <en>Crop Rotation Plan</en>
+        <da>Sædskifteplan</da>
+    </title>
+    <description>
+        <en><![CDATA[Shows the crop rotation plan for Riverbend Springs in-game: cycle year per field, what to sow and harvest this month, and the next task.
+
+Fields: 3-4-5, 6-7, 8 and 23-25 (4-year cycle), 76 and 77 (2-year Canola cycle).
+
+Settings: own tab in the in-game menu (Esc) > Crop rotation plan (start year, display: full/minimized/hidden, position: top/left).
+Alt+R: switch between full and minimized
+
+Plan (crops, plans, field groups): Documents\My Games\FarmingSimulator2025\modSettings\FS25_CropRotationPlan\cropRotationPlan.xml
+
+Console: crpSetStartYear <year>, crpReloadConfig]]></en>
+        <da><![CDATA[Viser sædskifteplanen for Riverbend Springs i spillet: cyklusår pr. mark, hvad der skal sås og høstes i denne måned, og næste opgave.
+
+Marker: 3-4-5, 6-7, 8 og 23-25 (4-årig cyklus), 76 og 77 (2-årig Canola-cyklus).
+
+Indstillinger: egen fane i menuen (Esc) > Sædskifteplan (startår, visning: fuld/minimeret/skjult, placering: top/venstre).
+Alt+R: skift mellem fuld og minimeret
+
+Planen (afgrøder, sædplaner, sammenlagte marker): Documents\My Games\FarmingSimulator2025\modSettings\FS25_CropRotationPlan\cropRotationPlan.xml
+
+Konsol: crpSetStartYear <år>, crpReloadConfig]]></da>
+    </description>
+    <iconFilename>icon_CropRotationPlan.dds</iconFilename>
+    <multiplayer supported="false"/>
+
+    <extraSourceFiles>
+        <sourceFile filename="scripts/CropRotationPlan.lua"/>
+    </extraSourceFiles>
+
+    <actions>
+        <action name="CRP_TOGGLE_SIZE" category="ONFOOT VEHICLE" axisType="HALF" ignoreComboMask="false"/>
+    </actions>
+
+    <inputBinding>
+        <actionBinding action="CRP_TOGGLE_SIZE">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_r"/>
+        </actionBinding>
+    </inputBinding>
+
+    <l10n>
+        <text name="input_CRP_TOGGLE_SIZE"><en>Crop rotation plan: full/minimized</en><da>Sædskifteplan: fuld/minimeret</da></text>
+
+        <text name="crp_title"><en>Crop rotation plan | game year %d | %s</en><da>Sædskifteplan | spilår %d | %s</da></text>
+        <text name="crp_footer"><en>Cycle year 1 = game year %d (change it in the menu (Esc) &gt; Crop rotation plan)</en><da>Cyklusår 1 = spilår %d (ændres i menuen (Esc) &gt; Sædskifteplan)</da></text>
+        <text name="crp_footerUnset"><en>Start year not set, using game year %d. Set it in the menu (Esc) &gt; Crop rotation plan</en><da>Startår ikke sat, bruger spilår %d. Sæt det i menuen (Esc) &gt; Sædskifteplan</da></text>
+        <text name="ui_cropRotationPlan"><en>Crop rotation plan</en><da>Sædskifteplan</da></text>
+        <text name="crp_tab_title"><en>Crop rotation plan</en><da>Sædskifteplan</da></text>
+        <text name="crp_section_plan"><en>Plan</en><da>Plan</da></text>
+        <text name="crp_section_display"><en>Display</en><da>Visning</da></text>
+        <text name="crp_section_file"><en>Plan file</en><da>Planfil</da></text>
+        <text name="crp_settings_file"><en>cropRotationPlan.xml</en><da>cropRotationPlan.xml</da></text>
+        <text name="crp_settings_file_tooltip"><en>The file is read again every time this page opens. Path: %s</en><da>Filen læses igen hver gang denne side åbnes. Sti: %s</da></text>
+        <text name="crp_status_ok"><en>OK: %d plans, %d field groups</en><da>OK: %d planer, %d markgrupper</da></text>
+        <text name="crp_status_error"><en>%d error(s), using the default plan. See log.txt</en><da>%d fejl, bruger standardplanen. Se log.txt</da></text>
+        <text name="crp_settings_startYear"><en>Start year (cycle year 1)</en><da>Startår (cyklusår 1)</da></text>
+        <text name="crp_settings_startYear_tooltip"><en>The game year that is year 1 of the crop rotation. Do the start work (autumn sowing) in the year before.</en><da>Det spilår der er år 1 i sædskiftet. Startarbejdet (efterårssåning) laves året før.</da></text>
+        <text name="crp_settings_yearText"><en>Year %d</en><da>År %d</da></text>
+        <text name="crp_settings_display"><en>Display</en><da>Visning</da></text>
+        <text name="crp_settings_display_tooltip"><en>Full shows every field. Minimized shows one icon: yellow = work this month (with number of fields), green = work next month, grey = nothing to do. Alt+R switches between full and minimized.</en><da>Fuld viser alle marker. Minimeret viser ét ikon: gult = opgaver denne måned (med antal marker), grønt = opgaver næste måned, gråt = intet at gøre. Alt+R skifter mellem fuld og minimeret.</da></text>
+        <text name="crp_settings_position"><en>Position</en><da>Placering</da></text>
+        <text name="crp_settings_position_tooltip"><en>Where the crop rotation plan is shown: at the top of the screen or on the left side.</en><da>Hvor sædskifteplanen vises: øverst på skærmen eller i venstre side.</da></text>
+        <text name="crp_position_top"><en>Top</en><da>Top</da></text>
+        <text name="crp_position_left"><en>Left</en><da>Venstre</da></text>
+        <text name="crp_display_full"><en>Full</en><da>Fuld</da></text>
+        <text name="crp_display_minimized"><en>Minimized</en><da>Minimeret</da></text>
+        <text name="crp_display_hidden"><en>Hidden</en><da>Skjult</da></text>
+        <text name="crp_configError"><en>Error in the plan file, see log.txt</en><da>Fejl i sædplan-filen, se log.txt</da></text>
+        <text name="crp_configErrorDefault"><en>Error in the plan file, using the default plan (see log.txt)</en><da>Fejl i sædplan-filen, bruger standardplanen (se log.txt)</da></text>
+        <text name="crp_startYearText"><en>Start (autumn before year 1)</en><da>Start (efteråret før År 1)</da></text>
+        <text name="crp_field"><en>Field</en><da>Mark</da></text>
+        <text name="crp_cycleYear"><en>Year %d/%d</en><da>År %d/%d</da></text>
+        <text name="crp_startsInYear"><en>starts in game year %d</en><da>starter i spilår %d</da></text>
+        <text name="crp_leaveEmpty"><en>Leave empty</en><da>Lad stå tom</da></text>
+        <text name="crp_now"><en>Now</en><da>Nu</da></text>
+        <text name="crp_next"><en>Next</en><da>Næste</da></text>
+        <text name="crp_nextYearShort"><en>next year</en><da>næste år</da></text>
+        <text name="crp_action_sow"><en>Sow</en><da>Så</da></text>
+        <text name="crp_action_harvest"><en>Harvest</en><da>Høst</da></text>
+
+        <text name="crp_month_1"><en>Jan</en><da>jan</da></text>
+        <text name="crp_month_2"><en>Feb</en><da>feb</da></text>
+        <text name="crp_month_3"><en>Mar</en><da>mar</da></text>
+        <text name="crp_month_4"><en>Apr</en><da>apr</da></text>
+        <text name="crp_month_5"><en>May</en><da>maj</da></text>
+        <text name="crp_month_6"><en>Jun</en><da>jun</da></text>
+        <text name="crp_month_7"><en>Jul</en><da>jul</da></text>
+        <text name="crp_month_8"><en>Aug</en><da>aug</da></text>
+        <text name="crp_month_9"><en>Sep</en><da>sep</da></text>
+        <text name="crp_month_10"><en>Oct</en><da>okt</da></text>
+        <text name="crp_month_11"><en>Nov</en><da>nov</da></text>
+        <text name="crp_month_12"><en>Dec</en><da>dec</da></text>
+    </l10n>
+</modDesc>
