@@ -18,12 +18,12 @@ with `en` and `da`.
 
 | Part | State |
 |---|---|
-| On-screen plan (full view) | Rendered in game in v1.1 (screenshot `docs/screenshots/2026-10-30_ingame_hud_v1.1.png`, old left position). v1.3 groups by plan, one line per field group; not yet seen in game. |
+| On-screen plan (full view) | Rendered in game in v1.1 (screenshot `Docs/screenshots/2026-10-30_ingame_hud_v1.1.png`, old left position). v1.3 groups by plan, one line per field group; not yet seen in game. |
 | Minimized view (icon) | Built, not yet seen in game. Yellow + count = work this month, green = next month, grey = nothing, red = config error. |
 | Alt+R full/minimized | Listed in the F1 help list in game; pressing it not yet reported. |
 | Position top/left | Built (top default: x=0.20, topY=0.99). Not yet seen in game. |
 | Plan from XML (`modSettings/FS25_CropRotationPlan/cropRotationPlan.xml`) | Built and unit-tested; to be replaced by savegame storage + editor in v2. |
-| Own tab in Esc menu | Registered (v1.3.1, Courseplay method) and shows, BUT rows render white with unreadable text, and the tab is at the end instead of above Settings. Screenshot `docs/screenshots/2026-10-30_ingame_tab_v1.3.1.png`. |
+| Own tab in Esc menu | Registered (v1.3.1, Courseplay method) and shows, BUT rows render white with unreadable text, and the tab is at the end instead of above Settings. Screenshot `Docs/screenshots/2026-10-30_ingame_tab_v1.3.1.png`. |
 | Multiplayer | Not supported (`<multiplayer supported="false"/>`). |
 
 Nothing in v1.x has been checked with GIANTS TestRunner.
@@ -33,7 +33,7 @@ Nothing in v1.x has been checked with GIANTS TestRunner.
 Sections 2 and 4 above describe v1.3.1. This section is the current state; where they differ, this one wins.
 
 ### Decisions by the owner
-- Mod folder is `Build/` (not `mod/`). `Docs/` holds an old v1.1 copy for reference only. Zip output goes to `dist/` (git-ignored).
+- Mod folder is `Build/` (not `mod/`). `Docs/` holds documentation (screenshots, PUBLISHING.md); `Docs/v1.1/` an old v1.1 copy for reference only. Windows ignores case: never add a separate lower-case `docs/`. Zip output goes to `dist/` (git-ignored).
 - Multiplayer: by default only the farm manager may edit a farm's plans. One switch per farm ("Farm manager only" / "Everyone on the farm"), which only the farm manager can change (decided 2026-10-30, option A; per-player permissions were rejected as too complex). The Multiplayer settings section shows only in multiplayer, with a "Your rights" status row.
 - No import of the old modSettings XML. The start year is gone; each field group has "Plan year now" (set on the Field groups tab).
 - Rice: still open, GitHub issue #1.
@@ -175,7 +175,7 @@ tests/
   check_config.py       Python mirror of the config compiler, checks defaultConfig.xml gives the original plan
 tools/build.sh          runs the checks and builds dist/FS25_CropRotationPlan.zip
 docs/mockups/           the agreed UI mockups (.dc.html, open in the canvas link above)
-docs/screenshots/       in-game screenshots and the log of the v1.3.0 menu freeze
+Docs/screenshots/       in-game screenshots and the log of the v1.3.0 menu freeze
 ```
 
 ## 5. Verified facts and pitfalls
@@ -188,7 +188,7 @@ docs/screenshots/       in-game screenshots and the log of the v1.3.0 menu freez
 - Text/overlay: `renderText`, `setTextColor`, `setTextBold`, `setTextAlignment(RenderText.ALIGN_*)`, `drawFilledRect`, `getTextWidth`, `Overlay.new/setPosition/setDimension/setColor/render/delete`.
 
 ### 5.2 Menu tab
-- `TabbedMenu:addPage` registers the frame's ROOT element as the page; the menu then cannot find the frame. Result (v1.3.0): `PagingElement.lua:249 'disabled'`, `TabbedMenu.lua:285 'iconFilename'`, `SmoothListElement.lua:873` every frame, menu frozen. See `docs/screenshots/2026-10-30_log_v1.3.0_menu_freeze.txt`.
+- `TabbedMenu:addPage` registers the frame's ROOT element as the page; the menu then cannot find the frame. Result (v1.3.0): `PagingElement.lua:249 'disabled'`, `TabbedMenu.lua:285 'iconFilename'`, `SmoothListElement.lua:873` every frame, menu frozen. See `Docs/screenshots/2026-10-30_log_v1.3.0_menu_freeze.txt`.
 - Working method (v1.3.1, from Courseplay `CpGuiUtil.fixInGameMenuPage`): `menu.pagingElement:addElement(frame)`, `updateAbsolutePosition`, `updatePageMapping`, `menu:registerPage(frame, position)`, `menu:addPageTab(frame, file, GuiUtils.getUVs({x,y,w,h},{texW,texH}))`. Courseplay also reorders `pagingElement.elements`, `pagingElement.pages` and `pageFrames` to put the page at a given position: needed for "above Settings" (find the index of `g_inGameMenu.pageSettings`).
 - `GuiUtils.getUVs` defaults to a 1024x1024 texture; pass the real size.
 - Clean up on `deleteMap`: `menu:unregisterPage(Class)`, `pagingElement:removeElement(frame)`, `updatePageMapping`, `frame:delete()`, `g_gui.frames[name] = nil`.

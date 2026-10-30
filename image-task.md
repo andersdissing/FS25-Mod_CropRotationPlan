@@ -1,7 +1,7 @@
 # Image task: screenshots to capture
 
-Save every image in `docs/screenshots/` with exactly the file name given. The README already points to them.
-Three of them (marked **ModHub**) are also the screenshots for the ModHub upload; see `docs/PUBLISHING.md`.
+Save every image in `Docs/screenshots/` with exactly the file name given. The README already points to them.
+Three of them (marked **ModHub**) are also the screenshots for the ModHub upload; see `Docs/PUBLISHING.md`.
 
 ## Before you start
 
@@ -45,5 +45,5 @@ Three of them (marked **ModHub**) are also the screenshots for the ModHub upload
 
 ## When you are done
 
-Put the files in `docs/screenshots/` and tell me. I will check them, convert the ModHub ones if needed,
+Put the files in `Docs/screenshots/` and tell me. I will check them, convert the ModHub ones if needed,
 and remove the `<!-- SCREENSHOT -->` markers from the README.

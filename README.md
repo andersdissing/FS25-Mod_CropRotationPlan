@@ -3,7 +3,7 @@
 A Farming Simulator 25 mod that lets you build crop rotation plans **inside the game** and shows on screen,
 every month, what to sow and harvest on which fields.
 
-![On-screen plan](docs/screenshots/02_hud_full.png)
+![On-screen plan](Docs/screenshots/02_hud_full.png)
 <!-- SCREENSHOT 02: on-screen plan, full view (see image-task.md) -->
 
 - Build plans year by year on a **year wheel** (January to December).
@@ -46,7 +46,7 @@ The plan is drawn on top of the game, at the top of the screen or on the left si
 
 | Full | Minimized |
 |---|---|
-| ![Full view](docs/screenshots/02_hud_full.png) | ![Minimized](docs/screenshots/03_hud_minimized.png) |
+| ![Full view](Docs/screenshots/02_hud_full.png) | ![Minimized](Docs/screenshots/03_hud_minimized.png) |
 | <!-- SCREENSHOT 02 --> | <!-- SCREENSHOT 03 --> |
 
 - **Full** shows one line per field group under the plan's name: the plan year (e.g. *Year 2/4*), the crops
@@ -64,7 +64,7 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 
 ### Settings
 
-![Settings](docs/screenshots/04_settings.png)
+![Settings](Docs/screenshots/04_settings.png)
 <!-- SCREENSHOT 04: Settings sub-tab, single player -->
 
 | Setting | What it does |
@@ -80,7 +80,7 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 
 | Columns | Year rows |
 |---|---|
-| ![Columns view](docs/screenshots/05_plans_columns.png) | ![Year rows view](docs/screenshots/06_plans_year_rows.png) |
+| ![Columns view](Docs/screenshots/05_plans_columns.png) | ![Year rows view](Docs/screenshots/06_plans_year_rows.png) |
 | <!-- SCREENSHOT 05 --> | <!-- SCREENSHOT 06 --> |
 
 - The list on the left shows your plans with their number of years and field groups.
@@ -93,7 +93,7 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 
 ### The plan editor
 
-![Plan editor](docs/screenshots/07_editor_add_seed.png)
+![Plan editor](Docs/screenshots/07_editor_add_seed.png)
 <!-- SCREENSHOT 07: plan editor, a gap selected, a crop picked -->
 
 1. Click a **dashed gap** (free months) on the year wheel.
@@ -106,7 +106,7 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 5. **Add seed to plan**. Click a bar to see it or remove it.
 6. **Save plan** stores the plan; **Cancel** throws the changes away.
 
-![Grass as a ley](docs/screenshots/08_editor_grass_ley.png)
+![Grass as a ley](Docs/screenshots/08_editor_grass_ley.png)
 <!-- SCREENSHOT 08: grass picked, ley duration and cut interval -->
 
 **Grass** is kept as a ley: choose how long it stays (3 or 6 months, 1, 2 or 3 years; only what fits the gap)
@@ -115,7 +115,7 @@ The editor shows about how many cuts that gives; grass does not grow from Novemb
 
 ### Field groups
 
-![Field groups](docs/screenshots/09_field_groups.png)
+![Field groups](Docs/screenshots/09_field_groups.png)
 <!-- SCREENSHOT 09: field groups with "add fields" active -->
 
 - **+ New field group**, then click your fields in **Your fields** on the right to add them.
@@ -127,7 +127,7 @@ The editor shows about how many cuts that gives; grass does not grow from Novemb
 
 ## Multiplayer
 
-![Multiplayer settings](docs/screenshots/10_multiplayer_settings.png)
+![Multiplayer settings](Docs/screenshots/10_multiplayer_settings.png)
 <!-- SCREENSHOT 10: Settings in multiplayer, Who can edit + Your rights -->
 
 - Every farm has its **own** plans, field groups and Grass in rotation setting.
@@ -179,8 +179,7 @@ Build/          the mod as it ships (zip the contents, not the folder)
   scripts/CropRotationPlanPages.lua   Plans, plan editor and Field groups pages
   scripts/CropRotationPlanFrame.lua   the Esc menu tab
   gui/CropRotationPlanFrame.xml       tab layout (header, sub-tabs, Settings rows)
-Docs/           old v1.1 copy, reference only
-docs/           screenshots, publishing checklist
+Docs/           screenshots, PUBLISHING.md (ModHub checklist), v1.1/ (old v1.1 copy, reference only)
 tests/          check_static.py, test_logic.py, smoke_test.py
 tools/          deploy.ps1 (local test), release.ps1 (GitHub release)
 HANDOFF.md      design decisions, verified facts and pitfalls, status
@@ -204,4 +203,4 @@ copies the zip to the mods folder and starts the game (`-NoStart` to skip starti
 
 `pwsh -File tools\release.ps1 2.2.0.0` sets the version in `Build/modDesc.xml`, tags `v2.2.0.0` and pushes.
 The GitHub workflow runs the checks and tests and publishes the release with `FS25_CropRotationPlan.zip`.
-Publishing on the in-game ModHub: see [docs/PUBLISHING.md](docs/PUBLISHING.md).
+Publishing on the in-game ModHub: see [Docs/PUBLISHING.md](Docs/PUBLISHING.md).
