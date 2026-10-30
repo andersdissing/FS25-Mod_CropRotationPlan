@@ -67,11 +67,20 @@
 
                 <Text profile="fs25_settingsSectionHeader" name="sectionHeader" id="sectionMultiplayer"/>
 
-                <Bitmap profile="fs25_multiTextOptionContainer">
-                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="editOption">
+                <!-- Multiplayer only (hidden in single player): the switch, which only the farm
+                     manager can change, and whether this player can edit -->
+                <Bitmap profile="fs25_multiTextOptionContainer" id="editRow">
+                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="editOption" onClick="onClickEditPermission">
                         <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="editTooltip"/>
                     </MultiTextOption>
                     <Text profile="fs25_settingsMultiTextOptionTitle" id="editTitle"/>
+                </Bitmap>
+
+                <Bitmap profile="fs25_multiTextOptionContainer" id="editStatusRow">
+                    <MultiTextOption profile="fs25_settingsMultiTextOption" id="editStatusOption">
+                        <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="editStatusTooltip"/>
+                    </MultiTextOption>
+                    <Text profile="fs25_settingsMultiTextOptionTitle" id="editStatusTitle"/>
                 </Bitmap>
 
             </ScrollingLayout>

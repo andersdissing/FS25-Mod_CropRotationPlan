@@ -9,7 +9,9 @@
 --     applies it, saves and sends the farm's new state to every client (CropRotationPlanStateEvent).
 --     A rejected edit is logged and the sender gets the current state back.
 --   * A player who joins gets the state of every farm (FSBaseMission.sendInitialClientState).
---   * Everyone on a farm may edit that farm's plans.
+--   * In multiplayer only the farm manager may edit a farm's plans, unless the farm manager has
+--     switched the farm to "Everyone on the farm". Only the farm manager can change that switch.
+--     In single player the player can always edit.
 
 CropRotationPlanSync = {}
 local S = CropRotationPlanSync
@@ -23,6 +25,7 @@ S.OP = {
     DELETE_GROUP = 6,
     ASSIGN_FIELD = 7,
     SET_GRASS = 8,
+    SET_PERMISSION = 9,
 }
 
 local function spectatorFarmId()
@@ -32,10 +35,53 @@ local function spectatorFarmId()
     return 0
 end
 
+function S.isMultiplayer()
+    return g_currentMission ~= nil and g_currentMission.missionDynamicInfo ~= nil
+        and g_currentMission.missionDynamicInfo.isMultiplayer == true
+end
+
+-- True if the user is the farm manager of the farm
+function S.isFarmManager(farmId, userId)
+    if userId == nil then
+        return false
+    end
+    local ok, result = pcall(function()
+        local farm = g_farmManager:getFarmById(farmId)
+        return farm ~= nil and farm:isUserFarmManager(userId)
+    end)
+    return ok and result == true
+end
+
+-- True if the user may edit the farm's plans (rules at the top of this file)
+function S.canEdit(farmId, userId)
+    if farmId == nil or farmId == spectatorFarmId() then
+        return false
+    end
+    if not S.isMultiplayer() then
+        return true
+    end
+    local farm = CropRotationPlanData.getFarm(CropRotationPlan.data, farmId, false)
+    if farm ~= nil and farm.editPermission == CropRotationPlanData.EDIT_EVERYONE then
+        return true
+    end
+    return S.isFarmManager(farmId, userId)
+end
+
+-- True if the user may change who can edit (the farm manager; anyone in single player)
+function S.canChangePermission(farmId, userId)
+    if farmId == nil or farmId == spectatorFarmId() then
+        return false
+    end
+    if not S.isMultiplayer() then
+        return true
+    end
+    return S.isFarmManager(farmId, userId)
+end
+
 -- Edit from this machine. op = { type = S.OP.*, plan, group, id, name, groupId, fieldId, value }
 function S.request(op)
     if g_server ~= nil then
-        S.apply(op, CropRotationPlan:getFarmId(), nil)
+        S.apply(op, CropRotationPlan:getFarmId(), CropRotationPlan:getUserId(), nil)
     elseif g_client ~= nil then
         g_client:getServerConnection():sendEvent(CropRotationPlanEditEvent.new(op))
     end
@@ -204,21 +250,34 @@ local function applyToFarm(op, farm)
     elseif op.type == O.SET_GRASS then
         farm.grassInRotation = op.value == true
 
+    elseif op.type == O.SET_PERMISSION then
+        farm.editPermission = op.value == true and D.EDIT_EVERYONE or D.EDIT_MANAGER
+
     else
         return false, "unknown edit"
     end
     return true
 end
 
--- Server: applies an edit for a farm. connection = the sender, nil for the server's own player.
-function S.apply(op, farmId, connection)
+-- Server: applies an edit for a farm. userId = the player who asked; connection = the sender,
+-- nil for the server's own player.
+function S.apply(op, farmId, userId, connection)
     if farmId == nil or farmId == spectatorFarmId() then
         Logging.warning("[CropRotationPlan] Edit rejected: player is not on a farm")
         return false
     end
+    local allowed
+    if op.type == S.OP.SET_PERMISSION then
+        allowed = S.canChangePermission(farmId, userId)
+    else
+        allowed = S.canEdit(farmId, userId)
+    end
     local farm = CropRotationPlanData.getFarm(CropRotationPlan.data, farmId, true)
     op.farmId = farmId
-    local ok, reason = applyToFarm(op, farm)
+    local ok, reason = false, "only the farm manager can edit"
+    if allowed then
+        ok, reason = applyToFarm(op, farm)
+    end
     if not ok then
         Logging.warning("[CropRotationPlan] Edit rejected for farm %d: %s", farmId, tostring(reason))
         if connection ~= nil then
@@ -324,7 +383,7 @@ function CropRotationPlanEditEvent:writeStream(streamId, connection)
     elseif op.type == O.ASSIGN_FIELD then
         streamWriteInt32(streamId, op.groupId or 0)
         streamWriteInt32(streamId, op.fieldId)
-    elseif op.type == O.SET_GRASS then
+    elseif op.type == O.SET_GRASS or op.type == O.SET_PERMISSION then
         streamWriteBool(streamId, op.value == true)
     end
 end
@@ -343,7 +402,7 @@ function CropRotationPlanEditEvent:readStream(streamId, connection)
     elseif op.type == O.ASSIGN_FIELD then
         op.groupId = streamReadInt32(streamId)
         op.fieldId = streamReadInt32(streamId)
-    elseif op.type == O.SET_GRASS then
+    elseif op.type == O.SET_GRASS or op.type == O.SET_PERMISSION then
         op.value = streamReadBool(streamId)
     end
     self.op = op
@@ -352,8 +411,12 @@ end
 
 function CropRotationPlanEditEvent:run(connection)
     if not connection:getIsServer() then
-        -- Server: the farm comes from the connection, never from the event
-        S.apply(self.op, S.getFarmIdOfConnection(connection), connection)
+        -- Server: the player and farm come from the connection, never from the event
+        local userId = nil
+        pcall(function()
+            userId = g_currentMission.userManager:getUserIdByConnection(connection)
+        end)
+        S.apply(self.op, S.getFarmIdOfConnection(connection), userId, connection)
     end
 end
 

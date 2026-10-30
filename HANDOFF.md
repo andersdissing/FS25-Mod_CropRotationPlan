@@ -34,12 +34,12 @@ Sections 2 and 4 above describe v1.3.1. This section is the current state; where
 
 ### Decisions by the owner
 - Mod folder is `Build/` (not `mod/`). `Docs/` holds an old v1.1 copy for reference only. Zip output goes to `dist/` (git-ignored).
-- Multiplayer: no farm-manager restriction. Everyone on a farm may edit that farm's plans.
+- Multiplayer: by default only the farm manager may edit a farm's plans. One switch per farm ("Farm manager only" / "Everyone on the farm"), which only the farm manager can change (decided 2026-10-30, option A; per-player permissions were rejected as too complex). The Multiplayer settings section shows only in multiplayer, with a "Your rights" status row.
 - No import of the old modSettings XML. The start year is gone; each field group has "Plan year now" (set on the Field groups tab).
 - Rice: still open, GitHub issue #1.
 - Repo: https://github.com/andersdissing/FS25-Mod_CropRotationPlan (private). Releases: tag `v<modDesc version>`, see below.
 
-### What v2 is (versions 2.0.0.0 and 2.1.0.0)
+### What v2 is (versions 2.0.0.0 to 2.2.0.0)
 | Part | State |
 |---|---|
 | Esc tab above Settings, dark rows, header icon, sub-tab backgrounds | Seen in game (v1.3.2 to v2.0, owner's screenshot and test). |
@@ -50,7 +50,7 @@ Sections 2 and 4 above describe v1.3.1. This section is the current state; where
 | Crops from the game | Worked in game: "25 crops read from the game" on Riverbend. |
 | Storage in `<savegame>/cropRotationPlan.xml`, new savegame empty | Worked in game (v2.0 file seen). v2.1 writes version 3 (per farm) and reads v2.0 files as farm 1. |
 | On-screen plan from the new data | Built; not reported. |
-| Multiplayer (v2.1) | Built and tested only in the smoke test (server + 2 clients), NOT in a real MP game yet. |
+| Multiplayer (v2.1) and edit permission (v2.2) | Built and tested only in the smoke test (server + clients, manager / non-manager / spectator), NOT in a real MP game yet. |
 | Known error | `TabbedMenu.lua:285 'iconFilename'` once when quitting a savegame (also in v1.3.1). Harmless so far. GitHub issue #2. |
 
 ### Files (Build/scripts)
@@ -58,7 +58,7 @@ Sections 2 and 4 above describe v1.3.1. This section is the current state; where
 - `CropRotationPlanLogic.lua` pure plan rules ported from `Editor_Crop.dc.html`: absolute months (t = 0 is Jan of plan year 1), gaps, sow choices, ley durations and cuts, overlaps, year rows, plan year from (planYear, anchorYear), tasks and group status. Calendar year = game year + 1 in Jan/Feb (game years run Mar to Feb, plans Jan to Dec).
 - `CropRotationPlanCrops.lua` crops read like the game's crop calendar: `getFruitTypes()` filtered to `shownOnMap`, `getIsPlantableInPeriod/getIsHarvestableInPeriod(missionInfo.growthMode, period)` in pcall, title and `hudOverlayFilename` from the fill type. Growth time = first plantable period of the window to the first harvestable period after it. Built-in calendar as fallback (non-seasonal growth). Blocked: trees, sugarcane, meadow, catch crops, crops harvested all year, rice (paddy).
 - `CropRotationPlanData.lua` data per farm `{ grassInRotation, plans, groups, nextPlanId, nextGroupId }`, savegame XML v3, local settings `modSettings/FS25_CropRotationPlan/settings.xml` (display, position), network stream read/write, edit helpers, example plan.
-- `CropRotationPlanSync.lua` multiplayer: `CropRotationPlanSync.request(op)` is the only way the UI changes data. Server/single player applies at once; a client sends `CropRotationPlanEditEvent`. The server takes the farm from the connection (`userManager:getUserIdByConnection`, `g_farmManager:getFarmByUserId`), validates (spectator, plan limits and overlaps, field owned by the farm), saves and broadcasts `CropRotationPlanStateEvent` for that farm. Rejected edit: warning in the log, sender gets the state back. Joining players get all farms via `FSBaseMission.sendInitialClientState`.
+- `CropRotationPlanSync.lua` multiplayer: `CropRotationPlanSync.request(op)` is the only way the UI changes data. Server/single player applies at once; a client sends `CropRotationPlanEditEvent`. The server takes user and farm from the connection (`userManager:getUserIdByConnection`, `g_farmManager:getFarmByUserId`), checks the edit right (`farm.editPermission`, `g_farmManager:getFarmById(id):isUserFarmManager(userId)`; local player: `g_currentMission.playerUserId`; multiplayer: `missionDynamicInfo.isMultiplayer`), validates (spectator, plan limits and overlaps, field owned by the farm), saves and broadcasts `CropRotationPlanStateEvent` for that farm. Rejected edit: warning in the log, sender gets the state back. Joining players get all farms via `FSBaseMission.sendInitialClientState`.
 - `CropRotationPlanUI.lua` small immediate-mode toolkit (rects, text, buttons, steppers, crop icons, tooltips, clickable boxes).
 - `CropRotationPlanPages.lua` the Plans, plan editor and Field groups pages.
 - `CropRotationPlanFrame.lua` + `gui/CropRotationPlanFrame.xml` the tab. Plans and Field groups containers are empty in the XML; the frame's `draw` draws the pages in the container's area and `mouseEvent` matches clicks against the boxes drawn.

@@ -51,7 +51,9 @@ afgrødekalender. Træer, plantager, sukkerrør og efterafgrøder kan ikke indg�
 - `crpReloadCrops`: læser afgrøderne igen og skriver dem i konsollen.
 
 ## Multiplayer
-Hver gård har sine egne planer, markgrupper og indstillingen Græs i sædskiftet. Alle på gården kan redigere dem.
+Hver gård har sine egne planer, markgrupper og indstillingen Græs i sædskiftet. Som standard kan kun gårdens leder redigere dem.
+Gårdens leder kan under Indstillinger > Multiplayer skifte "Hvem kan redigere planen" til "Alle på gården".
+"Dine rettigheder" viser om du selv kan redigere. Afsnittet Multiplayer vises kun i multiplayer.
 Serveren tjekker hver ændring (ingen overlap, marken skal tilhøre gården) og deler den med alle spillere.
 Tilskuere (ingen gård) kan ikke redigere. Visning og placering er hver spillers egne og gemmes på spillerens pc
 (`modSettings\FS25_CropRotationPlan\settings.xml`). `crpLoadExample` virker kun på serveren og fylder serverspillerens gård.

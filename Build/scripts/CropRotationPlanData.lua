@@ -3,7 +3,7 @@
 -- A new savegame starts with no plans and no field groups.
 --
 --   <cropRotationPlan version="3">
---     <farm id="1" grassInRotation="true" nextPlanId="2" nextGroupId="2">
+--     <farm id="1" grassInRotation="true" editPermission="manager" nextPlanId="2" nextGroupId="2">
 --       <plans>
 --         <plan id="1" name="4-year rotation" years="4">
 --           <seed crop="WHEAT" t="9"/>
@@ -30,6 +30,9 @@ CropRotationPlanData.LOCAL_FOLDER = "modSettings/FS25_CropRotationPlan/"
 CropRotationPlanData.LOCAL_FILENAME = "settings.xml"
 
 CropRotationPlanData.DISPLAY_MODES = { "full", "minimized", "hidden" }
+-- Who may edit a farm's plans in multiplayer: only the farm manager (default) or everyone on the farm
+CropRotationPlanData.EDIT_MANAGER = "manager"
+CropRotationPlanData.EDIT_EVERYONE = "everyone"
 CropRotationPlanData.POSITIONS = { "top", "left" }
 
 -- Limits checked by the server on every edit
@@ -45,6 +48,7 @@ end
 function CropRotationPlanData.newFarm()
     return {
         grassInRotation = true,
+        editPermission = CropRotationPlanData.EDIT_MANAGER,
         plans = {},
         groups = {},
         nextPlanId = 1,
@@ -186,6 +190,9 @@ function CropRotationPlanData.load()
         if farmId ~= nil then
             local farm = CropRotationPlanData.getFarm(data, farmId, true)
             farm.grassInRotation = xmlFile:getBool(key .. "#grassInRotation", true)
+            if xmlFile:getString(key .. "#editPermission") == CropRotationPlanData.EDIT_EVERYONE then
+                farm.editPermission = CropRotationPlanData.EDIT_EVERYONE
+            end
             farm.nextPlanId = xmlFile:getInt(key .. "#nextPlanId", 1)
             farm.nextGroupId = xmlFile:getInt(key .. "#nextGroupId", 1)
             loadFarm(xmlFile, key, farm)
@@ -239,6 +246,7 @@ function CropRotationPlanData.save(data)
         local key = string.format("%s.farm(%d)", root, f - 1)
         xmlFile:setInt(key .. "#id", farmId)
         xmlFile:setBool(key .. "#grassInRotation", farm.grassInRotation)
+        xmlFile:setString(key .. "#editPermission", farm.editPermission)
         xmlFile:setInt(key .. "#nextPlanId", farm.nextPlanId)
         xmlFile:setInt(key .. "#nextGroupId", farm.nextGroupId)
 
@@ -425,6 +433,7 @@ end
 function CropRotationPlanData.writeFarm(streamId, farmId, farm)
     streamWriteInt32(streamId, farmId)
     streamWriteBool(streamId, farm.grassInRotation)
+    streamWriteBool(streamId, farm.editPermission == CropRotationPlanData.EDIT_EVERYONE)
     streamWriteInt32(streamId, farm.nextPlanId)
     streamWriteInt32(streamId, farm.nextGroupId)
     streamWriteUInt16(streamId, #farm.plans)
@@ -441,6 +450,9 @@ function CropRotationPlanData.readFarm(streamId)
     local farmId = streamReadInt32(streamId)
     local farm = CropRotationPlanData.newFarm()
     farm.grassInRotation = streamReadBool(streamId)
+    if streamReadBool(streamId) then
+        farm.editPermission = CropRotationPlanData.EDIT_EVERYONE
+    end
     farm.nextPlanId = streamReadInt32(streamId)
     farm.nextGroupId = streamReadInt32(streamId)
     local plans = streamReadUInt16(streamId)

@@ -128,6 +128,35 @@ function CropRotationPlan:getFarmId()
     return 1
 end
 
+-- User id of the local player (multiplayer)
+function CropRotationPlan:getUserId()
+    if g_currentMission ~= nil then
+        return g_currentMission.playerUserId
+    end
+    return nil
+end
+
+function CropRotationPlan:isMultiplayer()
+    return CropRotationPlanSync.isMultiplayer()
+end
+
+-- May the local player edit the farm's plans / change who can edit?
+function CropRotationPlan:canEdit()
+    return CropRotationPlanSync.canEdit(self:getFarmId(), self:getUserId())
+end
+
+function CropRotationPlan:canChangePermission()
+    return CropRotationPlanSync.canChangePermission(self:getFarmId(), self:getUserId())
+end
+
+function CropRotationPlan:getEveryoneCanEdit()
+    return self:getFarm().editPermission == CropRotationPlanData.EDIT_EVERYONE
+end
+
+function CropRotationPlan:setEveryoneCanEdit(everyone)
+    CropRotationPlanSync.request({ type = CropRotationPlanSync.OP.SET_PERMISSION, value = everyone })
+end
+
 function CropRotationPlan:isSpectator()
     local spectator = (FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID) or 0
     return self:getFarmId() == spectator

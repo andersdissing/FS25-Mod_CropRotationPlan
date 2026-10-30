@@ -2,7 +2,8 @@
 -- Own tab in the in-game menu (Esc), placed directly above the base game Settings tab.
 -- Three sub-tabs:
 --   Settings:     display full / minimized / hidden, position top / left, the show/minimize key,
---                 grass in rotation, who can edit (base game option rows from the XML)
+--                 grass in rotation; in multiplayer also who can edit (farm manager only /
+--                 everyone on the farm) and whether this player can edit (base game option rows)
 --   Plans:        list of plans and the plan editor (CropRotationPlanPages, drawn in :draw)
 --   Field groups: field groups and the farm's own fields (CropRotationPlanPages, drawn in :draw)
 --
@@ -263,7 +264,9 @@ function CropRotationPlanFrame:updateRowColors()
 
     local isEven = false
     for _, element in ipairs(self.settingsLayout.elements) do
-        if element.name == "sectionHeader" then
+        if element.getIsVisible ~= nil and not element:getIsVisible() then
+            -- hidden rows (multiplayer rows in single player) do not count
+        elseif element.name == "sectionHeader" then
             isEven = false
         elseif element.setImageColor ~= nil then
             element:setImageColor(nil, unpack(InGameMenuSettingsFrame.COLOR_ALTERNATING[isEven]))
@@ -292,6 +295,8 @@ function CropRotationPlanFrame:updateTexts()
     setText(self.grassTooltip, t("crp_settings_grass_tooltip"))
     setText(self.editTitle, t("crp_settings_edit"))
     setText(self.editTooltip, t("crp_settings_edit_tooltip"))
+    setText(self.editStatusTitle, t("crp_settings_editStatus"))
+    setText(self.editStatusTooltip, t("crp_settings_editStatus_tooltip"))
 end
 
 -- An option row that only shows a text (the key, who can edit)
@@ -321,13 +326,35 @@ function CropRotationPlanFrame:updateValues()
         self.positionOption:setState(CropRotationPlan:getPositionIndex(), false)
     end
 
+    local canEdit = CropRotationPlan:canEdit()
     if self.grassOption ~= nil then
         self.grassOption:setTexts({ t("crp_on"), t("crp_off") })
         self.grassOption:setState(CropRotationPlan:getGrassInRotation() and 1 or 2, false)
+        self.grassOption:setDisabled(not canEdit)
     end
 
     setInfo(self.keyOption, t("crp_settings_key_value"))
-    setInfo(self.editOption, t("crp_settings_edit_value"))
+
+    -- Multiplayer section: only in multiplayer
+    local multiplayer = CropRotationPlan:isMultiplayer()
+    for _, element in ipairs({ self.sectionMultiplayer, self.editRow, self.editStatusRow }) do
+        if element ~= nil then
+            element:setVisible(multiplayer)
+        end
+    end
+    if self.editOption ~= nil then
+        self.editOption:setTexts({ t("crp_settings_edit_manager"), t("crp_settings_edit_everyone") })
+        self.editOption:setState(CropRotationPlan:getEveryoneCanEdit() and 2 or 1, false)
+        -- Only the farm manager can change who can edit
+        self.editOption:setDisabled(not CropRotationPlan:canChangePermission())
+    end
+    setInfo(self.editStatusOption, t(canEdit and "crp_status_canEdit" or "crp_status_managerOnly"))
+end
+
+function CropRotationPlanFrame:onClickEditPermission(state)
+    if CropRotationPlan:canChangePermission() then
+        CropRotationPlan:setEveryoneCanEdit(state == 2)
+    end
 end
 
 function CropRotationPlanFrame:onClickDisplay(state)

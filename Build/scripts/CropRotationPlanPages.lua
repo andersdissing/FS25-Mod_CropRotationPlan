@@ -57,7 +57,22 @@ end
 local OP = CropRotationPlanSync.OP
 
 local function request(op)
-    CropRotationPlanSync.request(op)
+    if CropRotationPlan:canEdit() then
+        CropRotationPlanSync.request(op)
+    end
+end
+
+-- Read-only state for this draw: no edit rights means edit buttons are disabled.
+-- Returns true when the page is read-only (and draws a notice in the top right corner).
+local function updateReadOnly(state, area)
+    state.readOnly = not CropRotationPlan:canEdit()
+    state.readOnlyText = t("crp_status_managerOnly")
+    if state.readOnly then
+        state.editor = nil
+        state.addTo = nil
+        UI.text(area.x + area.w, area.y + area.h - py(14), py(13), t("crp_status_managerOnly"), C.warnFg, "right", true)
+    end
+    return state.readOnly
 end
 
 -- Sends a changed copy of a stored plan
@@ -223,9 +238,13 @@ local function drawWheel(state, plan, crops, x, y, w, h, opts)
             if bw > px(30) then
                 UI.textIn(tx, by, laneH - py(2), py(12), label, C.dark, "left", true)
             end
-            UI.hit(state, bx, by, bw, laneH - py(2), function()
-                opts.onBar(seed)
-            end, tf("crp_barTip", crop.title, monthYear(seed.t, plan.years), monthYear(seed.e, plan.years)), "bar:" .. seed.crop .. ":" .. tostring(seed.t))
+            local onBar = nil
+            if not state.readOnly then
+                onBar = function()
+                    opts.onBar(seed)
+                end
+            end
+            UI.hit(state, bx, by, bw, laneH - py(2), onBar, tf("crp_barTip", crop.title, monthYear(seed.t, plan.years), monthYear(seed.e, plan.years)), "bar:" .. seed.crop .. ":" .. tostring(seed.t))
         end
 
         if #rows[yr] == 0 and opts.editor == nil then
@@ -310,7 +329,7 @@ local function drawColumns(state, plan, crops, x, y, w, h)
             local crop = crops[seed.crop] or CropRotationPlanCrops.get(seed.crop)
             local line1, line2 = cardLines(seed, crop, yr, n)
             UI.button(state, cx + px(10), cy, cw - px(20), cardH, nil, {
-                id = "card:" .. seed.crop .. ":" .. tostring(yr), bg = C.card,
+                id = "card:" .. seed.crop .. ":" .. tostring(yr), edit = true, bg = C.card,
                 onClick = function()
                     P.openEditor(state, plan, { type = "seed", i = seed.i })
                 end,
@@ -324,7 +343,7 @@ local function drawColumns(state, plan, crops, x, y, w, h)
             cy = cy - py(8)
         end
         UI.button(state, cx + px(10), y + py(10), cw - px(20), py(38), t("crp_addCrop"), {
-            id = "addCrop:" .. tostring(yr), dashed = true, ring = C.lineLight, fg = C.green, bold = true, size = py(13),
+            id = "addCrop:" .. tostring(yr), edit = true, dashed = true, ring = C.lineLight, fg = C.green, bold = true, size = py(13),
             onClick = function()
                 local first = gapRows[yr][1]
                 if first ~= nil then
@@ -350,6 +369,7 @@ function P.drawPlans(state, area)
         UI.paragraph(left, top - py(10), area.w * 0.6, py(16), t("crp_spectator"), C.muted)
         return
     end
+    updateReadOnly(state, area)
     -- Select a plan this player just made, once the server has sent it
     if state.waitForPlan ~= nil then
         local made = nil
@@ -391,7 +411,7 @@ function P.drawPlans(state, area)
     end
     y = y - py(44)
     UI.button(state, left, y, colW, py(44), string.upper(t("crp_newPlan")), {
-        dashed = true, ring = C.lineLight, fg = C.green, bold = true,
+        edit = true, dashed = true, ring = C.lineLight, fg = C.green, bold = true,
         onClick = function()
             newPlan(state)
         end,
@@ -406,7 +426,7 @@ function P.drawPlans(state, area)
 
     y = y - py(54)
     UI.button(state, left, y, colW, py(44), string.upper(t("crp_editPlan")), {
-        bg = C.green, fg = C.dark, bold = true,
+        edit = true, bg = C.green, fg = C.dark, bold = true,
         onClick = function()
             P.openEditor(state, plan, nil)
         end,
@@ -414,7 +434,7 @@ function P.drawPlans(state, area)
     y = y - py(54)
     local confirming = state.confirmDelete == plan.id
     UI.button(state, left, y, colW, py(44), string.upper(t(confirming and "crp_deleteConfirm" or "crp_deletePlan")), {
-        ring = C.danger, fg = C.dangerFg, bold = true, bg = confirming and C.warnBg or nil,
+        edit = true, ring = C.danger, fg = C.dangerFg, bold = true, bg = confirming and C.warnBg or nil,
         tooltip = t("crp_deletePlanTip"),
         onClick = function()
             if confirming then
@@ -431,7 +451,7 @@ function P.drawPlans(state, area)
     local hy = top - py(62)
     UI.label(rx, top - py(14), t("crp_planName"))
     UI.button(state, rx, hy, px(320), py(40), plan.name, {
-        bg = C.panelDark, ring = C.lineLight, align = "left", size = py(16), tooltip = t("crp_renameTip"),
+        edit = true, bg = C.panelDark, ring = C.lineLight, align = "left", size = py(16), tooltip = t("crp_renameTip"),
         onClick = function()
             showTextInput(t("crp_planName"), plan.name, function(text)
                 requestPlanChange(plan, function(copy)
@@ -453,7 +473,7 @@ function P.drawPlans(state, area)
                 copy.years = copy.years + 1
             end)
         end or nil,
-        { ring = C.green, id = "years" })
+        { ring = C.green, id = "years", edit = true })
     local vx = sx + px(190)
     UI.label(vx, top - py(14), t("crp_view"))
     local columns = state.plansView ~= "rows"
@@ -954,6 +974,7 @@ function P.drawGroups(state, area)
         UI.paragraph(x, top - py(10), area.w * 0.6, py(16), t("crp_spectator"), C.muted)
         return
     end
+    updateReadOnly(state, area)
     -- Put a field group this player just made into "add fields" mode, once the server has sent it
     if state.waitForGroup ~= nil then
         for _, g in ipairs(d.groups) do
@@ -1010,7 +1031,7 @@ function P.drawGroups(state, area)
                 break
             end
             UI.button(state, cx, chipY, cw, chipH, label, {
-                id = "chip:" .. label, bg = C.chip, bold = true, tooltip = tf("crp_removeFieldTip", id),
+                id = "chip:" .. label, edit = true, bg = C.chip, bold = true, tooltip = tf("crp_removeFieldTip", id),
                 onClick = function()
                     request({ type = OP.ASSIGN_FIELD, groupId = 0, fieldId = id })
                 end,
@@ -1025,7 +1046,7 @@ function P.drawGroups(state, area)
         end
         local adding = state.addTo == group.id
         UI.button(state, cx, chipY, px(34), chipH, "+", {
-            id = "addField:" .. tostring(i), dashed = not adding, ring = C.lineLight, bg = adding and C.green or nil,
+            id = "addField:" .. tostring(i), edit = true, dashed = not adding, ring = C.lineLight, bg = adding and C.green or nil,
             fg = adding and C.dark or C.green, bold = true, tooltip = t("crp_addFieldTip"),
             onClick = function()
                 if state.addTo == group.id then
@@ -1058,7 +1079,7 @@ function P.drawGroups(state, area)
             end or nil,
             #planIds > 1 and function()
                 setPlan((current % #planIds) + 1)
-            end or nil, { id = "groupPlan:" .. tostring(i) })
+            end or nil, { id = "groupPlan:" .. tostring(i), edit = true })
 
         -- Plan year now
         if plan ~= nil then
@@ -1072,7 +1093,7 @@ function P.drawGroups(state, area)
                 end or nil,
                 plan.years > 1 and function()
                     setYear((planYear % plan.years) + 1)
-                end or nil, { id = "groupYear:" .. tostring(i) })
+                end or nil, { id = "groupYear:" .. tostring(i), edit = true })
             local cropsText = CropRotationPlan.cropsText(LG.getCropsInYear(plan, crops, planYear))
             UI.textIn(xCrops, ry, rowH, py(14), UI.fit(cropsText, py(14), cropsW), C.text)
         else
@@ -1083,7 +1104,7 @@ function P.drawGroups(state, area)
         -- Remove group (click twice)
         local confirming = state.confirmGroup == group.id
         UI.button(state, xDel, stepY, delW, stepH, confirming and "?" or "X", {
-            id = "delGroup:" .. tostring(i), ring = C.danger, fg = C.dangerFg, bold = true, bg = confirming and C.warnBg or nil,
+            id = "delGroup:" .. tostring(i), edit = true, ring = C.danger, fg = C.dangerFg, bold = true, bg = confirming and C.warnBg or nil,
             tooltip = t(confirming and "crp_removeGroupConfirm" or "crp_removeGroupTip"),
             onClick = function()
                 if confirming then
@@ -1105,7 +1126,7 @@ function P.drawGroups(state, area)
     end
 
     UI.button(state, x, area.y + py(10), px(260), py(44), string.upper(t("crp_newGroup")), {
-        dashed = true, ring = C.lineLight, fg = C.green, bold = true,
+        edit = true, dashed = true, ring = C.lineLight, fg = C.green, bold = true,
         onClick = function()
             state.waitForGroup = d.nextGroupId
             state.groupScroll = math.max(0, #d.groups + 1 - maxRows)

@@ -166,12 +166,21 @@ if IS_SERVER then
   g_server = { broadcastEvent = function(self, event) capture(event, "all") end }
 end
 g_client = { getServerConnection = function() return { sendEvent = function(self, event) capture(event, "server") end } end }
-USER_FARMS = { [1] = 1, [2] = 2, [3] = 0 }
-g_farmManager = { getFarmByUserId = function(self, userId)
-  local f = USER_FARMS[userId]
-  if f == nil then return nil end
-  return { farmId = f }
-end }
+-- user 1: farm 1 manager, user 2: farm 2 manager, user 3: spectator, user 4: farm 2, not manager
+USER_FARMS = { [1] = 1, [2] = 2, [3] = 0, [4] = 2 }
+MANAGERS = { [1] = { [1] = true }, [2] = { [2] = true } }
+g_farmManager = {
+  getFarmByUserId = function(self, userId)
+    local f = USER_FARMS[userId]
+    if f == nil then return nil end
+    return { farmId = f }
+  end,
+  getFarmById = function(self, farmId)
+    return { farmId = farmId, isUserFarmManager = function(farm, userId)
+      return MANAGERS[farmId] ~= nil and MANAGERS[farmId][userId] == true
+    end }
+  end,
+}
 
 -- GUI elements
 GuiElement = {}
@@ -185,6 +194,7 @@ function GuiElement:getIsVisible() return self.visible end
 function GuiElement:setSelected(v) self.selected = v end
 function GuiElement:setTexts(t) self.texts = t end
 function GuiElement:setState(s) self.state = s end
+function GuiElement:setDisabled(d) self.disabled = d end
 function GuiElement:addText(t) end
 function GuiElement:setSize(w, h) self.size = { w, h } end
 function GuiElement:invalidateLayout() end
@@ -247,6 +257,8 @@ g_currentMission = {
   environment = { currentYear = 3, currentPeriod = 4 },
   hud = { getIsVisible = function() return true end },
   getFarmId = function() return LOCAL_FARM end,
+  playerUserId = USER_ID,
+  missionDynamicInfo = { isMultiplayer = IS_MP },
   userManager = { getUserIdByConnection = function(self, connection) return connection.userId end },
 }
 -- Fields 40 and 41 belong to farm 2, field 50 to nobody, all others to farm 1
@@ -362,7 +374,7 @@ end
 """
 
 
-def make_runtime(is_server, local_farm):
+def make_runtime(is_server, local_farm, multiplayer=False, user_id=1):
     lua = LuaRuntime(unpack_returned_tuples=True)
     g = lua.globals()
     g.MOD_DIR = BUILD.replace("\\", "/") + "/"
@@ -370,6 +382,8 @@ def make_runtime(is_server, local_farm):
     g.FRAME_IDS = lua.table_from(frame_ids)
     g.IS_SERVER = is_server
     g.LOCAL_FARM = local_farm
+    g.IS_MP = multiplayer
+    g.USER_ID = user_id
     lua.execute(ENV)
     return lua
 
@@ -449,6 +463,8 @@ G.hud("minimized")
 
 # Settings
 frame.onFrameOpen(frame)
+check("single player: multiplayer section hidden", frame.sectionMultiplayer.visible is False and frame.editRow.visible is False and frame.editStatusRow.visible is False)
+check("single player: can always edit", MOD.canEdit(MOD) is True and frame.grassOption.disabled is False)
 check("grass option On/Off", frame.grassOption.texts[1] == "On")
 frame.onClickGrass(frame, 2)
 check("grass off (farm setting)", farm().grassInRotation is False)
@@ -654,8 +670,8 @@ check("single player: no errors logged", len(errors(lua)) == 0, errors(lua)[:3])
 # 2. Multiplayer: server (farm 1), client on farm 2 (user 2), spectator (user 3)
 # =====================================================================================
 print("--- multiplayer")
-server = make_runtime(True, 1)
-client = make_runtime(False, 2)
+server = make_runtime(True, 1, True, 1)
+client = make_runtime(False, 2, True, 2)
 SG, CG = server.globals(), client.globals()
 targets = {"all": [(client, 2)], "user:2": [(client, 2)], "user:3": []}
 
@@ -793,6 +809,73 @@ check("server HUD shows farm 1", "4-year rotation" in out and "Hacked" not in ou
 SG.MOD.save(SG.MOD)
 loaded, _ = SG.CropRotationPlanData.load()
 check("savegame keeps both farms", len(loaded.farms[1].plans) == 2 and len(loaded.farms[2].plans) == 1 and pylist(loaded.farms[2].groups[1].fields) == [40])
+
+# --- Who can edit -------------------------------------------------------------------
+cframe.updateSubCategoryPages(cframe, 1)
+cframe.onFrameOpen(cframe)
+check("multiplayer: section shown", cframe.sectionMultiplayer.visible is True and cframe.editRow.visible is True)
+check("default: farm manager only", sfarm(2).editPermission == "manager" and cframe.editOption.state == 1)
+check("farm manager: switch enabled, status 'can edit'",
+      cframe.editOption.disabled is False and cframe.editStatusOption.texts[1] == texts["crp_status_canEdit"])
+
+
+def deliver_from(user_id, op_table):
+    """An edit sent by another player (user_id) on the client's machine, delivered to the server."""
+    CG.CropRotationPlanSync.request(op_table)
+    for msg in pylist(CG.takeNet()):
+        SG.deliver(msg["name"], server.table_from(pylist(msg["values"])), False, user_id)
+    SG.takeNet()
+
+
+before = len(sfarm(2).plans)
+deliver_from(4, client.table_from({"type": OP.NEW_PLAN, "name": "Worker plan"}))
+check("non-manager edit rejected while 'farm manager only'", len(sfarm(2).plans) == before)
+deliver_from(4, client.table_from({"type": OP.SET_PERMISSION, "value": True}))
+check("non-manager cannot change who can edit", sfarm(2).editPermission == "manager")
+
+cframe.onClickEditPermission(cframe, 2)
+pump()
+check("farm manager switched to everyone", sfarm(2).editPermission == "everyone" and cfarm(2).editPermission == "everyone")
+check("farm 1 still 'farm manager only'", sfarm(1).editPermission == "manager")
+deliver_from(4, client.table_from({"type": OP.NEW_PLAN, "name": "Worker plan"}))
+check("non-manager can edit when 'everyone'", len(sfarm(2).plans) == before + 1)
+deliver_from(4, client.table_from({"type": OP.SET_PERMISSION, "value": False}))
+check("non-manager still cannot change the switch", sfarm(2).editPermission == "everyone")
+cframe.onClickEditPermission(cframe, 1)
+pump()
+check("farm manager switched back", sfarm(2).editPermission == "manager")
+
+# The client's player is demoted: read-only screens
+CG.MANAGERS[2][2] = False
+SG.MANAGERS[2][2] = False  # the game syncs farm roles; both sides see the demotion
+cframe.onFrameOpen(cframe)
+check("non-manager: switch disabled", cframe.editOption.disabled is True)
+check("non-manager: status says view only", cframe.editStatusOption.texts[1] == texts["crp_status_managerOnly"])
+check("non-manager: grass setting disabled", cframe.grassOption.disabled is True)
+cframe.updateSubCategoryPages(cframe, 2)
+CG.drawFrame()
+check("non-manager: plans page shows view only", texts["crp_status_managerOnly"] in CG.rendered())
+check("non-manager: no edit buttons", "+ NEW PLAN" not in pylist(CG.hitIds()) and "EDIT PLAN" not in pylist(CG.hitIds()))
+check("non-manager: can still look at other plans and views", "YEAR ROWS" in pylist(CG.hitIds()))
+cframe.updateSubCategoryPages(cframe, 3)
+CG.drawFrame()
+check("non-manager: field groups read-only", "+ NEW FIELD GROUP" not in pylist(CG.hitIds()) and not any(i.startswith("chip:") for i in pylist(CG.hitIds())))
+before = len(sfarm(2).groups)
+cframe.onClickGrass(cframe, 1)
+CG.CropRotationPlanSync.request(client.table_from({"type": OP.NEW_GROUP}))
+pump()
+check("non-manager: requests from the server side also rejected", len(sfarm(2).groups) == before)
+random.seed(3)
+for step in range(300):
+    CG.drawFrame()
+    n_hits = len(cframe.pageState.hits)
+    if n_hits:
+        CG.clickIndex(random.randint(1, n_hits))
+    pump()
+check("non-manager random clicking changes nothing", len(sfarm(2).groups) == before)
+CG.MANAGERS[2][2] = True
+SG.MANAGERS[2][2] = True
+cframe.onFrameOpen(cframe)
 
 # Random clicking on the client, with the network in between
 random.seed(2)

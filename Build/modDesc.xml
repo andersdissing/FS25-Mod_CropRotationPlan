@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="105">
     <author>Anders Dissing</author>
-    <version>2.1.0.0</version>
+    <version>2.2.0.0</version>
     <title>
         <en>Crop Rotation Plan</en>
         <da>Sædskifteplan</da>
@@ -15,7 +15,7 @@ Menu (Esc) > Crop rotation plan:
 - Settings: display full / minimized / hidden, position top / left, grass in rotation.
 
 Crops are read from the game (map, DLC and mod crops). Plans are saved in the savegame; a new savegame starts empty.
-Multiplayer: each farm has its own plans and field groups, and everyone on the farm can edit them.
+Multiplayer: each farm has its own plans and field groups. The farm manager edits them, or lets everyone on the farm edit them.
 Alt+R: switch between full and minimized.
 Console: crpLoadExample (Riverbend Springs example plan), crpReloadCrops]]></en>
         <da><![CDATA[Planlæg dit sædskifte i spillet og se på skærmen, hvad der skal sås og høstes i denne måned.
@@ -26,7 +26,7 @@ Menu (Esc) > Sædskifteplan:
 - Indstillinger: visning fuld / minimeret / skjult, placering top / venstre, græs i sædskiftet.
 
 Afgrøderne læses fra spillet (kort, DLC og mod-afgrøder). Planerne gemmes i savegamet; et nyt savegame starter tomt.
-Multiplayer: hver gård har sine egne planer og markgrupper, og alle på gården kan redigere dem.
+Multiplayer: hver gård har sine egne planer og markgrupper. Gårdens leder redigerer dem eller lader alle på gården redigere.
 Alt+R: skift mellem fuld og minimeret.
 Konsol: crpLoadExample (eksempelplan for Riverbend Springs), crpReloadCrops]]></da>
     </description>
@@ -83,8 +83,13 @@ Konsol: crpLoadExample (eksempelplan for Riverbend Springs), crpReloadCrops]]></
         <text name="crp_settings_grass"><en>Grass in rotation</en><da>Græs i sædskiftet</da></text>
         <text name="crp_settings_grass_tooltip"><en>When on, grass can be added to a plan as a ley: you choose how long it stays and how often it is cut. Applies to everyone on your farm.</en><da>Når slået til kan græs lægges ind i en plan som græsmark: du vælger hvor længe den ligger og hvor tit der slås. Gælder alle på din gård.</da></text>
         <text name="crp_settings_edit"><en>Who can edit the plan</en><da>Hvem kan redigere planen</da></text>
-        <text name="crp_settings_edit_value"><en>Everyone on the farm</en><da>Alle på gården</da></text>
-        <text name="crp_settings_edit_tooltip"><en>Each farm has its own plans and field groups. Everyone on the farm can edit them; the server checks every change and shares it with all players.</en><da>Hver gård har sine egne planer og markgrupper. Alle på gården kan redigere dem; serveren tjekker hver ændring og deler den med alle spillere.</da></text>
+        <text name="crp_settings_edit_manager"><en>Farm manager only</en><da>Kun gårdens leder</da></text>
+        <text name="crp_settings_edit_everyone"><en>Everyone on the farm</en><da>Alle på gården</da></text>
+        <text name="crp_settings_edit_tooltip"><en>Each farm has its own plans and field groups. Only the farm manager can change this setting. The server checks every change and shares it with all players.</en><da>Hver gård har sine egne planer og markgrupper. Kun gårdens leder kan ændre denne indstilling. Serveren tjekker hver ændring og deler den med alle spillere.</da></text>
+        <text name="crp_settings_editStatus"><en>Your rights</en><da>Dine rettigheder</da></text>
+        <text name="crp_settings_editStatus_tooltip"><en>Whether you can change the plans and field groups of your farm.</en><da>Om du kan ændre din gårds planer og markgrupper.</da></text>
+        <text name="crp_status_canEdit"><en>You can edit the plans</en><da>Du kan redigere planerne</da></text>
+        <text name="crp_status_managerOnly"><en>View only: only the farm manager can edit</en><da>Kun visning: kun gårdens leder kan redigere</da></text>
         <text name="crp_spectator"><en>Join a farm to see and edit its crop rotation plans.</en><da>Gå med i en gård for at se og redigere dens sædskifteplaner.</da></text>
         <text name="crp_on"><en>On</en><da>Til</da></text>
         <text name="crp_off"><en>Off</en><da>Fra</da></text>

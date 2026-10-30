@@ -209,9 +209,14 @@ function UI.paragraph(x, topY, maxWidth, size, text, c)
     return y
 end
 
--- Button: opts = { bg, fg, ring, dashed, size, bold, align, disabled, onClick, tooltip, selected, id }
+-- Button: opts = { bg, fg, ring, dashed, size, bold, align, disabled, onClick, tooltip, selected, id, edit }
+-- edit = true: the button changes the plans; it is disabled while state.readOnly (no edit rights)
 function UI.button(state, x, y, w, h, label, opts)
     opts = opts or {}
+    if opts.edit and state.readOnly then
+        opts.disabled = true
+        opts.tooltip = state.readOnlyText or opts.tooltip
+    end
     local bg = opts.bg
     if opts.selected and opts.selectedBg ~= nil then
         bg = opts.selectedBg
@@ -253,6 +258,9 @@ end
 -- "<  value  >" stepper. onPrev / onNext nil = that arrow is disabled.
 function UI.stepper(state, x, y, w, h, value, onPrev, onNext, opts)
     opts = opts or {}
+    if opts.edit and state.readOnly then
+        onPrev, onNext = nil, nil
+    end
     UI.rect(x, y, w, h, UI.C.panelDark)
     UI.border(x, y, w, h, opts.ring or UI.C.lineLight)
     local aw = UI.px(36)
