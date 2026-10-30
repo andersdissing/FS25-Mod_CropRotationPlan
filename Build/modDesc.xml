@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="105">
     <author>Anders Dissing</author>
-    <version>1.3.2.0</version>
+    <version>1.3.3.0</version>
     <title>
         <en>Crop Rotation Plan</en>
         <da>Sædskifteplan</da>
@@ -60,7 +60,7 @@ Konsol: crpSetStartYear <år>, crpReloadConfig]]></da>
         <text name="crp_section_plan"><en>Plan</en><da>Plan</da></text>
         <text name="crp_section_display"><en>Display</en><da>Visning</da></text>
         <text name="crp_section_file"><en>Plan file</en><da>Planfil</da></text>
-        <text name="crp_settings_file"><en>cropRotationPlan.xml</en><da>cropRotationPlan.xml</da></text>
+        <text name="crp_settings_file"><en>Configuration file status</en><da>Status for konfigurationsfil</da></text>
         <text name="crp_settings_file_tooltip"><en>The file is read again every time this page opens. Path: %s</en><da>Filen læses igen hver gang denne side åbnes. Sti: %s</da></text>
         <text name="crp_status_ok"><en>OK: %d plans, %d field groups</en><da>OK: %d planer, %d markgrupper</da></text>
         <text name="crp_status_error"><en>%d error(s), using the default plan. See log.txt</en><da>%d fejl, bruger standardplanen. Se log.txt</da></text>

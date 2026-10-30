@@ -32,6 +32,19 @@ local function setText(element, text)
     end
 end
 
+-- Shows a whole image file (size x size pixels) in a Bitmap. The UVs must be reset too:
+-- profiles such as fs25_menuHeaderIcon point at a small slice of the game's icon atlas, and
+-- with our file and those UVs the header icon rendered as a plain green block (v1.3.2).
+local function setImage(element, filename, size)
+    if element == nil or element.setImageFilename == nil then
+        return
+    end
+    element:setImageFilename(filename)
+    if element.setImageUVs ~= nil then
+        element:setImageUVs(nil, unpack(GuiUtils.getUVs({ 0, 0, size, size }, { size, size })))
+    end
+end
+
 -- Moves item so it comes directly before anchor in list (at the end if anchor is not in it).
 -- getElement maps a list entry to the element it stands for (default: the entry itself).
 local function moveBefore(list, item, anchor, getElement)
@@ -165,7 +178,16 @@ function CropRotationPlanFrame:initializeSubPages()
     self.subTabs = { self.tabSettings, self.tabPlans, self.tabGroups }
 
     for i, key in ipairs(CropRotationPlanFrame.SUB_PAGE_TEXTS) do
-        setText(self.subTabs[i], t(key))
+        local tab = self.subTabs[i]
+        setText(tab, t(key))
+        -- The button grows with its text, its green background does not (v1.3.2 covered
+        -- only part of "SETTINGS"). Same fix as Courseplay's CpGlobalSettingsFrame.
+        if tab ~= nil then
+            local background = tab:getDescendantByName("background")
+            if background ~= nil then
+                background:setSize(tab.size[1], tab.size[2])
+            end
+        end
         if self.subCategoryPaging ~= nil then
             self.subCategoryPaging:addText(tostring(i))
         end
@@ -253,8 +275,8 @@ end
 
 function CropRotationPlanFrame:updateTexts()
     setText(self.headerTitle, t("crp_tab_title"))
-    if self.headerIcon ~= nil and self.headerIcon.setImageFilename ~= nil and self.modDirectory ~= nil then
-        self.headerIcon:setImageFilename(self.modDirectory .. "icon_minimized.dds")
+    if self.modDirectory ~= nil then
+        setImage(self.headerIcon, self.modDirectory .. "icon_minimized.dds", 256)
     end
 
     setText(self.plansPlaceholder, t("crp_comingSoon"))
@@ -306,6 +328,10 @@ function CropRotationPlanFrame:updateValues()
     if self.fileStatusOption ~= nil then
         self.fileStatusOption:setTexts({ CropRotationPlan:getConfigStatusText() })
         self.fileStatusOption:setState(1, false)
+    end
+    if self.modDirectory ~= nil then
+        local icon = CropRotationPlan:getConfigOk() and "icon_statusOk.dds" or "icon_statusError.dds"
+        setImage(self.fileStatusIcon, self.modDirectory .. icon, 64)
     end
 end
 

@@ -63,6 +63,8 @@
                         <Text profile="fs25_multiTextOptionTooltip" name="tooltip" id="fileStatusTooltip"/>
                     </MultiTextOption>
                     <Text profile="fs25_settingsMultiTextOptionTitle" id="fileStatusTitle"/>
+                    <!-- Green check / red cross, just left of the value box. Image is set in Lua. -->
+                    <Bitmap id="fileStatusIcon" with="anchorMiddleRight" position="-300px 0px" size="26px 26px"/>
                 </Bitmap>
 
             </ScrollingLayout>

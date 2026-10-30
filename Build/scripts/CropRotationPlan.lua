@@ -260,6 +260,11 @@ function CropRotationPlan:loadConfig()
     end
 end
 
+-- True when the plan file was read without errors
+function CropRotationPlan:getConfigOk()
+    return self.configErrors == nil or #self.configErrors == 0
+end
+
 -- One-line status of the plan file for the settings tab
 function CropRotationPlan:getConfigStatusText()
     if self.configErrors ~= nil and #self.configErrors > 0 then
