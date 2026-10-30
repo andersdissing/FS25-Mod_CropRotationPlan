@@ -10,6 +10,14 @@
 4. Screenshot key: the game's own key saves to `Documents\My Games\FarmingSimulator2025\screenshots\`.
    Rename the files as below and put them in `Docs/screenshots/`.
 
+## Status (2026-10-30)
+
+- Done: `01_fields.png` (1600x900, no HUD: good for ModHub).
+- Taken instead of shots 2 and 3, kept for the README: `plans_year_rows.png` (Plans page) and
+  `field_groups.png` (retake after the next build: field numbers 23, 25, 76, 77 showed as "2.." / "7..").
+- **Still needed:** shot 2 (the plan **on screen over a field**, menu closed) and shot 3 (the **plan editor**).
+- Next time use **1920x1080** if the screen allows it (these are 1600x900, which is 16:9 and fine for the README).
+
 ## A. ModHub and README (your normal 16:9 resolution)
 
 | # | File | What | How |

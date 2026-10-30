@@ -133,7 +133,8 @@ end
 -- Shortens text to fit maxWidth
 function UI.fit(text, size, maxWidth, bold)
     setTextBold(bold == true)
-    if getTextWidth(size, text) <= maxWidth then
+    -- 2px tolerance: a box made exactly as wide as its text must not shorten it (game screenshot 2026-10-30)
+    if getTextWidth(size, text) <= maxWidth + UI.px(2) then
         setTextBold(false)
         return text
     end

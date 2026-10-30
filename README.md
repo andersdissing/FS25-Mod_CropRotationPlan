@@ -80,6 +80,8 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 - **Year rows** shows one row per year from January to December, with a bar from sowing to harvest.
   A bar that crosses the new year continues in the next row.
 
+![Plans, Year rows view](Docs/screenshots/plans_year_rows.png)
+
 ### The plan editor
 
 <!-- screenshot: Docs/screenshots/03_plan_editor.png -->
@@ -101,6 +103,7 @@ The editor shows about how many cuts that gives; grass does not grow from Novemb
 
 ### Field groups
 
+<!-- screenshot: Docs/screenshots/field_groups.png (retake: field numbers 23/25/76/77 were shortened, fixed in the next build) -->
 
 - **+ New field group**, then click your fields in **Your fields** on the right to add them.
   Your fields are read from the game (the farmland your farm owns); grey ones are not in a group yet.

@@ -1025,7 +1025,8 @@ function P.drawGroups(state, area)
         for _, id in ipairs(group.fields) do
             local label = tostring(id)
             setTextBold(true)
-            local cw = getTextWidth(py(14), label) + px(20)
+            -- 28px: 2 x 10px button padding plus room, so "23" is never shortened to "2.."
+            local cw = getTextWidth(py(14), label) + px(28)
             setTextBold(false)
             if cx + cw > xFields + fieldsW - px(80) then
                 break
