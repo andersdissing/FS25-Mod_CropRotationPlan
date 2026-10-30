@@ -44,5 +44,5 @@ Checklist and rules: `PUBLISHING.md`.
 ## Version
 
 ModHub guideline 5.5: the first ModHub release normally has version **1.0.0.0** (higher only if the mod was
-released publicly elsewhere first; our GitHub repository is private). Set it with
-`pwsh -File tools\release.ps1 1.0.0.0` before uploading.
+released publicly elsewhere first; our GitHub repository is private). Done: release v1.0.0.0 (2026-10-30),
+https://github.com/andersdissing/FS25-Mod_CropRotationPlan/releases/tag/v1.0.0.0. Upload that zip.
