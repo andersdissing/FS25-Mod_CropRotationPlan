@@ -3,8 +3,7 @@
 A Farming Simulator 25 mod that lets you build crop rotation plans **inside the game** and shows on screen,
 every month, what to sow and harvest on which fields.
 
-![On-screen plan](Docs/screenshots/02_hud_full.png)
-<!-- SCREENSHOT 02: on-screen plan, full view (see image-task.md) -->
+<!-- screenshot: Docs/screenshots/02_hud_full.png (on-screen plan, full view (see image-task.md)) -->
 
 - Build plans year by year on a **year wheel** (January to December).
 - Only crops that can actually **grow in a free gap** are offered; you pick the sow month and the harvest month follows from the crop's growth time.
@@ -44,10 +43,8 @@ every month, what to sow and harvest on which fields.
 
 The plan is drawn on top of the game, at the top of the screen or on the left side.
 
-| Full | Minimized |
-|---|---|
-| ![Full view](Docs/screenshots/02_hud_full.png) | ![Minimized](Docs/screenshots/03_hud_minimized.png) |
-| <!-- SCREENSHOT 02 --> | <!-- SCREENSHOT 03 --> |
+<!-- screenshot: Docs/screenshots/02_hud_full.png -->
+<!-- screenshot: Docs/screenshots/03_hud_minimized.png -->
 
 - **Full** shows one line per field group under the plan's name: the plan year (e.g. *Year 2/4*), the crops
   this year, and either **Now:** (yellow, work this month) or **Next:** with the month.
@@ -64,8 +61,7 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 
 ### Settings
 
-![Settings](Docs/screenshots/04_settings.png)
-<!-- SCREENSHOT 04: Settings sub-tab, single player -->
+<!-- screenshot: Docs/screenshots/04_settings.png (Settings sub-tab, single player) -->
 
 | Setting | What it does |
 |---|---|
@@ -78,10 +74,8 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 
 ### Plans
 
-| Columns | Year rows |
-|---|---|
-| ![Columns view](Docs/screenshots/05_plans_columns.png) | ![Year rows view](Docs/screenshots/06_plans_year_rows.png) |
-| <!-- SCREENSHOT 05 --> | <!-- SCREENSHOT 06 --> |
+<!-- screenshot: Docs/screenshots/05_plans_columns.png -->
+<!-- screenshot: Docs/screenshots/06_plans_year_rows.png -->
 
 - The list on the left shows your plans with their number of years and field groups.
   **+ New plan** asks for a name; **Edit plan** opens the editor; **Delete plan** needs a second click.
@@ -93,8 +87,7 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 
 ### The plan editor
 
-![Plan editor](Docs/screenshots/07_editor_add_seed.png)
-<!-- SCREENSHOT 07: plan editor, a gap selected, a crop picked -->
+<!-- screenshot: Docs/screenshots/07_editor_add_seed.png (plan editor, a gap selected, a crop picked) -->
 
 1. Click a **dashed gap** (free months) on the year wheel.
 2. The side panel lists the crops that **fit** the gap. Crops that do not fit are greyed out;
@@ -106,8 +99,7 @@ It has three sub-tabs: **Settings**, **Plans** and **Field groups**.
 5. **Add seed to plan**. Click a bar to see it or remove it.
 6. **Save plan** stores the plan; **Cancel** throws the changes away.
 
-![Grass as a ley](Docs/screenshots/08_editor_grass_ley.png)
-<!-- SCREENSHOT 08: grass picked, ley duration and cut interval -->
+<!-- screenshot: Docs/screenshots/08_editor_grass_ley.png (grass picked, ley duration and cut interval) -->
 
 **Grass** is kept as a ley: choose how long it stays (3 or 6 months, 1, 2 or 3 years; only what fits the gap)
 and when it is cut: **Ready to harvest** (every 2 growing months) or **Fully grown** (every 3).
@@ -115,8 +107,7 @@ The editor shows about how many cuts that gives; grass does not grow from Novemb
 
 ### Field groups
 
-![Field groups](Docs/screenshots/09_field_groups.png)
-<!-- SCREENSHOT 09: field groups with "add fields" active -->
+<!-- screenshot: Docs/screenshots/09_field_groups.png (field groups with "add fields" active) -->
 
 - **+ New field group**, then click your fields in **Your fields** on the right to add them.
   Your fields are read from the game (the farmland your farm owns); grey ones are not in a group yet.
@@ -127,8 +118,7 @@ The editor shows about how many cuts that gives; grass does not grow from Novemb
 
 ## Multiplayer
 
-![Multiplayer settings](Docs/screenshots/10_multiplayer_settings.png)
-<!-- SCREENSHOT 10: Settings in multiplayer, Who can edit + Your rights -->
+<!-- screenshot: Docs/screenshots/10_multiplayer_settings.png (Settings in multiplayer, Who can edit + Your rights) -->
 
 - Every farm has its **own** plans, field groups and Grass in rotation setting.
 - By default **only the farm manager** can edit them. The farm manager can switch

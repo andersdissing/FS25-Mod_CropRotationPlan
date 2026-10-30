@@ -61,4 +61,4 @@ Same names with `16-10`, `21-9` (and `32-9`).
 ## When you are done
 
 Put the files in `Docs/screenshots/` and tell me. I will check them, convert the ModHub ones if needed,
-and remove the `<!-- SCREENSHOT -->` markers from the README.
+and turn the hidden `<!-- screenshot: ... -->` notes in the README back into images.
