@@ -40,7 +40,7 @@ Fuld visning: en linje pr. markgruppe under planens navn med planår, årets afg
 Minimeret: ét ikon. Gult med tal = opgaver denne måned (antal marker), grønt = opgaver næste måned, gråt = intet.
 
 ## Gemt i savegamet
-Alt gemmes i `cropRotationPlan.xml` i savegame-mappen. Et nyt savegame starter tomt.
+Planer og markgrupper gemmes af serveren i `cropRotationPlan.xml` i savegame-mappen. Et nyt savegame starter tomt.
 
 ## Afgrøder
 Afgrøderne læses fra spillet (kort, DLC og mod-afgrøder) med så- og høstmåneder fra spillets egen
@@ -51,4 +51,7 @@ afgrødekalender. Træer, plantager, sukkerrør og efterafgrøder kan ikke indg�
 - `crpReloadCrops`: læser afgrøderne igen og skriver dem i konsollen.
 
 ## Multiplayer
-Understøttes ikke endnu.
+Hver gård har sine egne planer, markgrupper og indstillingen Græs i sædskiftet. Alle på gården kan redigere dem.
+Serveren tjekker hver ændring (ingen overlap, marken skal tilhøre gården) og deler den med alle spillere.
+Tilskuere (ingen gård) kan ikke redigere. Visning og placering er hver spillers egne og gemmes på spillerens pc
+(`modSettings\FS25_CropRotationPlan\settings.xml`). `crpLoadExample` virker kun på serveren og fylder serverspillerens gård.

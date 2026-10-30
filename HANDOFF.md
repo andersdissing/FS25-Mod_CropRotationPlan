@@ -28,6 +28,65 @@ with `en` and `da`.
 
 Nothing in v1.x has been checked with GIANTS TestRunner.
 
+## 2a. v2 status (updated 2026-10-30, local Claude Code session)
+
+Sections 2 and 4 above describe v1.3.1. This section is the current state; where they differ, this one wins.
+
+### Decisions by the owner
+- Mod folder is `Build/` (not `mod/`). `Docs/` holds an old v1.1 copy for reference only. Zip output goes to `dist/` (git-ignored).
+- Multiplayer: no farm-manager restriction. Everyone on a farm may edit that farm's plans.
+- No import of the old modSettings XML. The start year is gone; each field group has "Plan year now" (set on the Field groups tab).
+- Rice: still open, GitHub issue #1.
+- Repo: https://github.com/andersdissing/FS25-Mod_CropRotationPlan (private). Releases: tag `v<modDesc version>`, see below.
+
+### What v2 is (versions 2.0.0.0 and 2.1.0.0)
+| Part | State |
+|---|---|
+| Esc tab above Settings, dark rows, header icon, sub-tab backgrounds | Seen in game (v1.3.2 to v2.0, owner's screenshot and test). |
+| Settings: Display, Position, key row, Grass in rotation, Who can edit | Base-game option rows from the XML. |
+| Plans (list, new/rename/delete, Columns and Year rows views) | Seen in game in v2.0: owner made 3 plans incl. grass leys. |
+| Plan editor (year wheel, gaps, crops that fit, sow month, ley + cut interval, follow-ups, Save/Cancel) | As above. |
+| Field groups (fields from farmland ownership, plan, plan year now, crops this year) | As above: 3 groups saved. |
+| Crops from the game | Worked in game: "25 crops read from the game" on Riverbend. |
+| Storage in `<savegame>/cropRotationPlan.xml`, new savegame empty | Worked in game (v2.0 file seen). v2.1 writes version 3 (per farm) and reads v2.0 files as farm 1. |
+| On-screen plan from the new data | Built; not reported. |
+| Multiplayer (v2.1) | Built and tested only in the smoke test (server + 2 clients), NOT in a real MP game yet. |
+| Known error | `TabbedMenu.lua:285 'iconFilename'` once when quitting a savegame (also in v1.3.1). Harmless so far. GitHub issue #2. |
+
+### Files (Build/scripts)
+- `CropRotationPlan.lua` main: local settings, current farm, on-screen plan, input, load/save hooks, console `crpLoadExample` (server only) and `crpReloadCrops`.
+- `CropRotationPlanLogic.lua` pure plan rules ported from `Editor_Crop.dc.html`: absolute months (t = 0 is Jan of plan year 1), gaps, sow choices, ley durations and cuts, overlaps, year rows, plan year from (planYear, anchorYear), tasks and group status. Calendar year = game year + 1 in Jan/Feb (game years run Mar to Feb, plans Jan to Dec).
+- `CropRotationPlanCrops.lua` crops read like the game's crop calendar: `getFruitTypes()` filtered to `shownOnMap`, `getIsPlantableInPeriod/getIsHarvestableInPeriod(missionInfo.growthMode, period)` in pcall, title and `hudOverlayFilename` from the fill type. Growth time = first plantable period of the window to the first harvestable period after it. Built-in calendar as fallback (non-seasonal growth). Blocked: trees, sugarcane, meadow, catch crops, crops harvested all year, rice (paddy).
+- `CropRotationPlanData.lua` data per farm `{ grassInRotation, plans, groups, nextPlanId, nextGroupId }`, savegame XML v3, local settings `modSettings/FS25_CropRotationPlan/settings.xml` (display, position), network stream read/write, edit helpers, example plan.
+- `CropRotationPlanSync.lua` multiplayer: `CropRotationPlanSync.request(op)` is the only way the UI changes data. Server/single player applies at once; a client sends `CropRotationPlanEditEvent`. The server takes the farm from the connection (`userManager:getUserIdByConnection`, `g_farmManager:getFarmByUserId`), validates (spectator, plan limits and overlaps, field owned by the farm), saves and broadcasts `CropRotationPlanStateEvent` for that farm. Rejected edit: warning in the log, sender gets the state back. Joining players get all farms via `FSBaseMission.sendInitialClientState`.
+- `CropRotationPlanUI.lua` small immediate-mode toolkit (rects, text, buttons, steppers, crop icons, tooltips, clickable boxes).
+- `CropRotationPlanPages.lua` the Plans, plan editor and Field groups pages.
+- `CropRotationPlanFrame.lua` + `gui/CropRotationPlanFrame.xml` the tab. Plans and Field groups containers are empty in the XML; the frame's `draw` draws the pages in the container's area and `mouseEvent` matches clicks against the boxes drawn.
+
+### Verified facts and pitfalls learned in v1.3.2 to v2.1
+- Settings rows (`fs25_multiTextOptionContainer`) are white by default; colour them with `InGameMenuSettingsFrame.COLOR_ALTERNATING[isEven]`, restarting after each `name="sectionHeader"` (as AutoDrive and AdvancedDamageSystem do). This fixed the white rows.
+- Page position: move the frame before `g_inGameMenu.pageSettings` in `pagingElement.elements`, `pagingElement.pages` and `pageFrames`, then `rebuildTabList()`.
+- Sub-tab buttons grow with their text but their `background` ThreePartBitmap does not: `background:setSize(tab.size[1], tab.size[2])` after `setText`.
+- `fs25_menuHeaderIcon` points at an atlas slice; with your own file call `setImageUVs(nil, unpack(GuiUtils.getUVs({0,0,w,h},{w,h})))` or it renders as a solid block.
+- `TextInputDialog.show(callback, target, default, title, prompt, maxChars, okText)`: always pass a target, otherwise the game calls `callback(text, clickOk)` without it.
+- Custom pages are drawn in Lua (not cloned base-game elements, unlike 3.1) to avoid guessing GUI profile names. Mouse only; no gamepad/keyboard navigation on those pages yet.
+- The game's GUI XML and icon atlas are inside `dataS.gar`; slice ids for check/cross icons were not found.
+- Owner's documents folder is redirected to OneDrive: `[Environment]::GetFolderPath('MyDocuments')`, not `%USERPROFILE%\Documents`. FS25 is installed under Steam (app id 2300320).
+
+### Testing and tools
+- `tests/check_static.py` XML, Lua 5.1 syntax (no goto, //, table.unpack), l10n keys, en/da placeholders.
+- `tests/test_logic.py` plan rules in a real Lua runtime (`pip install lupa`).
+- `tests/smoke_test.py` the whole mod against a stubbed FS25: single-player play-through, savegame round trip, v2.0 file migration, 3000 random clicks; then multiplayer with one server and two clients in separate Lua runtimes, events written and read through a stream, bad edits rejected, 1500 random client clicks. Catches nil errors and wrong `string.format` arguments (real l10n texts), not layout problems.
+- `tools/deploy.ps1` builds the zip, kills FS25, keeps the last `log.txt` in `dist/logs/`, copies to the mods folder, starts the game via Steam (`-NoStart` to skip).
+- `tools/release.ps1 <version>` sets `<version>` in modDesc, tags `v<version>`, pushes; `.github/workflows/release.yml` fails if tag and modDesc differ, runs the checks and tests, publishes the release with `FS25_CropRotationPlan.zip` (file name never carries the version: the game takes the mod name from it).
+
+### Next steps
+1. Test v2.1 in game: single player (plans from v2.0 must still be there as farm 1), then a real multiplayer session (host + one client, two farms).
+2. Issue #2 (quit error): try keeping the page installed on `deleteMap` like AdvancedDamageSystem.
+3. Gamepad/keyboard navigation on the custom pages.
+4. Rice / paddy (issue #1).
+5. TestRunner, German texts, screenshots if it goes to ModHub.
+
 ## 3. Target v2.0 (agreed with the owner through the mockups)
 
 Mockups: `docs/mockups/*.dc.html` and the live canvas

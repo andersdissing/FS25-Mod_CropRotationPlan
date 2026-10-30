@@ -1,11 +1,13 @@
 -- CropRotationPlan.lua
 -- FS25 mod: crop rotation plans built in the game, shown on screen.
 --
--- Everything is stored per savegame in <savegame>/cropRotationPlan.xml (CropRotationPlanData):
---   settings     display full / minimized / hidden, position top / left, grass in rotation
+-- Per farm, kept by the server and stored in <savegame>/cropRotationPlan.xml (CropRotationPlanData):
 --   plans        name, years in cycle, seeds (crop + sow month)
 --   field groups fields, plan, "plan year now"
+--   grass in rotation
+-- Per player, stored on the player's PC (modSettings): display full / minimized / hidden, position.
 -- A new savegame starts empty; plans and field groups are made in the menu (Esc) > Crop rotation plan.
+-- Multiplayer: edits go through the server (CropRotationPlanSync).
 --
 -- Alt+R (rebindable in Settings > Controls) switches between full and minimized.
 -- Minimized is a single icon: yellow = tasks now (with count), green = tasks next month, grey = nothing.
@@ -15,6 +17,7 @@ local modDirectory = g_currentModDirectory
 source(modDirectory .. "scripts/CropRotationPlanLogic.lua")
 source(modDirectory .. "scripts/CropRotationPlanCrops.lua")
 source(modDirectory .. "scripts/CropRotationPlanData.lua")
+source(modDirectory .. "scripts/CropRotationPlanSync.lua")
 source(modDirectory .. "scripts/CropRotationPlanUI.lua")
 source(modDirectory .. "scripts/CropRotationPlanPages.lua")
 source(modDirectory .. "scripts/CropRotationPlanFrame.lua")
@@ -36,6 +39,7 @@ CropRotationPlan.ANCHORS = {
 }
 
 CropRotationPlan.data = CropRotationPlanData.new()
+CropRotationPlan.settings = CropRotationPlanData.newLocalSettings()
 
 -- Layout (normalized screen coordinates, origin bottom-left)
 CropRotationPlan.UI = {
@@ -113,8 +117,29 @@ function CropRotationPlan:getCalendarYear()
     return CropRotationPlanLogic.calendarYear(self:getCurrentYear(), self:getCurrentPeriod())
 end
 
+-- Farm of the local player (1 in single player; 0 = spectator)
+function CropRotationPlan:getFarmId()
+    if g_currentMission ~= nil and g_currentMission.getFarmId ~= nil then
+        local ok, farmId = pcall(g_currentMission.getFarmId, g_currentMission)
+        if ok and farmId ~= nil then
+            return farmId
+        end
+    end
+    return 1
+end
+
+function CropRotationPlan:isSpectator()
+    local spectator = (FarmManager ~= nil and FarmManager.SPECTATOR_FARM_ID) or 0
+    return self:getFarmId() == spectator
+end
+
+-- Plans, field groups and grass setting of the local player's farm
+function CropRotationPlan:getFarm()
+    return CropRotationPlanData.getFarm(self.data, self:getFarmId(), true)
+end
+
 function CropRotationPlan:getCrops()
-    return CropRotationPlanCrops.getLookup(self.data.plans)
+    return CropRotationPlanCrops.getLookup(self:getFarm().plans)
 end
 
 ---------------------------------------------------------------------------
@@ -131,36 +156,39 @@ local function indexOf(list, value)
 end
 
 function CropRotationPlan:getDisplayModeIndex()
-    return indexOf(CropRotationPlan.DISPLAY_MODES, self.data.settings.displayMode)
+    return indexOf(CropRotationPlan.DISPLAY_MODES, self.settings.displayMode)
 end
 
 function CropRotationPlan:getPositionIndex()
-    return indexOf(CropRotationPlan.POSITIONS, self.data.settings.position)
+    return indexOf(CropRotationPlan.POSITIONS, self.settings.position)
 end
 
+-- Display and position are the player's own: saved on this PC, not sent to anyone
 function CropRotationPlan:setDisplayMode(mode)
-    self.data.settings.displayMode = mode
-    self:save()
+    self.settings.displayMode = mode
+    CropRotationPlanData.saveLocal(self.settings)
 end
 
 function CropRotationPlan:setPosition(position)
     if CropRotationPlan.ANCHORS[position] ~= nil then
-        self.data.settings.position = position
-        self:save()
+        self.settings.position = position
+        CropRotationPlanData.saveLocal(self.settings)
     end
 end
 
 function CropRotationPlan:getGrassInRotation()
-    return self.data.settings.grassInRotation
+    return self:getFarm().grassInRotation
 end
 
 function CropRotationPlan:setGrassInRotation(allowed)
-    self.data.settings.grassInRotation = allowed
-    self:save()
+    CropRotationPlanSync.request({ type = CropRotationPlanSync.OP.SET_GRASS, value = allowed })
 end
 
+-- Only the server writes the savegame file
 function CropRotationPlan:save()
-    CropRotationPlanData.save(self.data)
+    if g_server ~= nil then
+        CropRotationPlanData.save(self.data)
+    end
 end
 
 ---------------------------------------------------------------------------
@@ -168,10 +196,24 @@ end
 ---------------------------------------------------------------------------
 
 function CropRotationPlan:loadMap(filename)
-    self.data = CropRotationPlanData.load()
+    local settings, existed = CropRotationPlanData.loadLocal()
+    self.settings = settings
+    if g_server ~= nil then
+        local data, oldDisplay = CropRotationPlanData.load()
+        self.data = data
+        if not existed and oldDisplay ~= nil then
+            -- v2.0 kept display and position in the savegame
+            CropRotationPlanData.applyOldDisplay(self.settings, oldDisplay)
+            CropRotationPlanData.saveLocal(self.settings)
+        end
+    end
+    -- A client keeps self.data: it is filled by the server's CropRotationPlanStateEvent
     CropRotationPlanCrops.load()
-    self.iconOverlay = Overlay.new(modDirectory .. "icon_minimized.dds", 0, 0, 0, 0)
-    CropRotationPlanFrame.install(modDirectory)
+    -- A dedicated server has no screen: no on-screen plan and no menu tab there
+    if g_dedicatedServer == nil then
+        self.iconOverlay = Overlay.new(modDirectory .. "icon_minimized.dds", 0, 0, 0, 0)
+        CropRotationPlanFrame.install(modDirectory)
+    end
     addConsoleCommand("crpLoadExample", "Crop rotation plan: replace plans and field groups with the Riverbend Springs example", "consoleLoadExample", self)
     addConsoleCommand("crpReloadCrops", "Crop rotation plan: read the crops from the game again", "consoleReloadCrops", self)
 end
@@ -188,9 +230,14 @@ function CropRotationPlan:deleteMap()
 end
 
 function CropRotationPlan:consoleLoadExample()
-    CropRotationPlanData.loadExample(self.data, self:getCalendarYear())
+    if g_server == nil then
+        return "Crop rotation plan: crpLoadExample only works on the server"
+    end
+    local farm = self:getFarm()
+    CropRotationPlanData.loadExample(farm, self:getCalendarYear())
     self:save()
-    return string.format("Crop rotation plan: example loaded (%d plans, %d field groups)", #self.data.plans, #self.data.groups)
+    CropRotationPlanSync.broadcastFarm(self:getFarmId())
+    return string.format("Crop rotation plan: example loaded for farm %d (%d plans, %d field groups)", self:getFarmId(), #farm.plans, #farm.groups)
 end
 
 function CropRotationPlan:consoleReloadCrops()
@@ -225,9 +272,9 @@ end
 
 -- Full -> minimized -> full. From hidden the key brings it back as minimized.
 function CropRotationPlan:onToggleSize()
-    if self.data.settings.displayMode == CropRotationPlan.DISPLAY_FULL then
+    if self.settings.displayMode == CropRotationPlan.DISPLAY_FULL then
         self:setDisplayMode(CropRotationPlan.DISPLAY_MINIMIZED)
-    elseif self.data.settings.displayMode == CropRotationPlan.DISPLAY_MINIMIZED then
+    elseif self.settings.displayMode == CropRotationPlan.DISPLAY_MINIMIZED then
         self:setDisplayMode(CropRotationPlan.DISPLAY_FULL)
     else
         self:setDisplayMode(CropRotationPlan.DISPLAY_MINIMIZED)
@@ -283,11 +330,12 @@ function CropRotationPlan:buildGroups()
     local crops = self:getCrops()
     local calendarYear = self:getCalendarYear()
     local month = self:getCurrentMonth()
+    local farm = self:getFarm()
     local out = {}
 
-    for _, plan in ipairs(self.data.plans) do
+    for _, plan in ipairs(farm.plans) do
         local entry = { title = plan.name, groups = {} }
-        for _, group in ipairs(self.data.groups) do
+        for _, group in ipairs(farm.groups) do
             if group.planId == plan.id and #group.fields > 0 then
                 local s = CropRotationPlanLogic.getGroupStatus(plan, crops, group, calendarYear, month)
                 local row = {
@@ -495,7 +543,7 @@ function CropRotationPlan:drawMinimized(plans)
 end
 
 function CropRotationPlan:draw()
-    if self.data.settings.displayMode == CropRotationPlan.DISPLAY_HIDDEN then
+    if self.settings.displayMode == CropRotationPlan.DISPLAY_HIDDEN then
         return
     end
     if g_gui ~= nil and g_gui:getIsGuiVisible() then
@@ -508,12 +556,12 @@ function CropRotationPlan:draw()
         return
     end
 
-    local anchor = CropRotationPlan.ANCHORS[self.data.settings.position] or CropRotationPlan.ANCHORS.top
+    local anchor = CropRotationPlan.ANCHORS[self.settings.position] or CropRotationPlan.ANCHORS.top
     CropRotationPlan.UI.x = anchor.x
     CropRotationPlan.UI.topY = anchor.topY
 
     local plans = self:buildGroups()
-    if self.data.settings.displayMode == CropRotationPlan.DISPLAY_MINIMIZED then
+    if self.settings.displayMode == CropRotationPlan.DISPLAY_MINIMIZED then
         self:drawMinimized(plans)
     else
         self:drawFull(plans)

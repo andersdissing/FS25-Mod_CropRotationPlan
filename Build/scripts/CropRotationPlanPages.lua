@@ -3,8 +3,10 @@
 -- Drawn with CropRotationPlanUI inside the sub-page container's area; `state` is the frame's
 -- page state (mouse position, clickable boxes, selection, editor working copy).
 --
--- Plans and field groups are saved as soon as they change; the plan editor works on a copy
--- that is only stored when the player presses Save plan.
+-- The pages never change the data themselves: every edit is a request to the server
+-- (CropRotationPlanSync.request), which applies it, saves it and sends it to all players.
+-- In single player and on the host that happens at once. The plan editor works on a copy
+-- that is only sent when the player presses Save plan.
 
 CropRotationPlanPages = {}
 local P = CropRotationPlanPages
@@ -47,12 +49,26 @@ local function monthsList(months)
     return table.concat(parts, "/")
 end
 
+-- Plans and field groups of the local player's farm
 local function data()
-    return CropRotationPlan.data
+    return CropRotationPlan:getFarm()
 end
 
-local function save()
-    CropRotationPlan:save()
+local OP = CropRotationPlanSync.OP
+
+local function request(op)
+    CropRotationPlanSync.request(op)
+end
+
+-- Sends a changed copy of a stored plan
+local function requestPlanChange(plan, change)
+    local copy = CropRotationPlanData.copyPlan(plan)
+    change(copy)
+    request({ type = OP.PUT_PLAN, plan = copy })
+end
+
+local function requestGroupChange(group, planId, planYear)
+    request({ type = OP.PUT_GROUP, group = { id = group.id, planId = planId, planYear = planYear, fields = {} } })
 end
 
 local function cropLabel(crop)
@@ -246,14 +262,13 @@ function P.openEditor(state, plan, sel)
     state.editor = { plan = copy, sel = sel, panelScroll = 0 }
 end
 
+-- Asks for a name, then asks the server for the plan. The new plan is selected when it
+-- arrives (see drawPlans).
 local function newPlan(state)
     local d = data()
-    local plan = CropRotationPlanData.addPlan(d, tf("crp_newPlanName", #d.plans + 1))
-    state.selectedPlanId = plan.id
-    save()
-    showTextInput(t("crp_planName"), plan.name, function(text)
-        plan.name = text
-        save()
+    showTextInput(t("crp_planName"), tf("crp_newPlanName", #d.plans + 1), function(text)
+        state.waitForPlan = d.nextPlanId
+        request({ type = OP.NEW_PLAN, name = text })
     end)
 end
 
@@ -331,6 +346,23 @@ function P.drawPlans(state, area)
     local crops = CropRotationPlan:getCrops()
     local top = area.y + area.h
     local left = area.x
+    if CropRotationPlan:isSpectator() then
+        UI.paragraph(left, top - py(10), area.w * 0.6, py(16), t("crp_spectator"), C.muted)
+        return
+    end
+    -- Select a plan this player just made, once the server has sent it
+    if state.waitForPlan ~= nil then
+        local made = nil
+        for _, p in ipairs(d.plans) do
+            if p.id >= state.waitForPlan then
+                made = p
+            end
+        end
+        if made ~= nil then
+            state.selectedPlanId = made.id
+            state.waitForPlan = nil
+        end
+    end
     local plan = getSelectedPlan(state)
 
     -- Left: list of plans
@@ -386,10 +418,9 @@ function P.drawPlans(state, area)
         tooltip = t("crp_deletePlanTip"),
         onClick = function()
             if confirming then
-                CropRotationPlanData.removePlan(d, plan.id)
+                request({ type = OP.DELETE_PLAN, id = plan.id })
                 state.confirmDelete = nil
                 state.selectedPlanId = nil
-                save()
             else
                 state.confirmDelete = plan.id
             end
@@ -403,8 +434,9 @@ function P.drawPlans(state, area)
         bg = C.panelDark, ring = C.lineLight, align = "left", size = py(16), tooltip = t("crp_renameTip"),
         onClick = function()
             showTextInput(t("crp_planName"), plan.name, function(text)
-                plan.name = text
-                save()
+                requestPlanChange(plan, function(copy)
+                    copy.name = text
+                end)
             end)
         end,
     })
@@ -412,12 +444,14 @@ function P.drawPlans(state, area)
     UI.label(sx, top - py(14), t("crp_yearsInCycle"))
     UI.stepper(state, sx, hy, px(170), py(40), tostring(plan.years),
         LG.canRemoveYear(plan, crops) and function()
-            plan.years = plan.years - 1
-            save()
+            requestPlanChange(plan, function(copy)
+                copy.years = copy.years - 1
+            end)
         end or nil,
         LG.canAddYear(plan) and function()
-            plan.years = plan.years + 1
-            save()
+            requestPlanChange(plan, function(copy)
+                copy.years = copy.years + 1
+            end)
         end or nil,
         { ring = C.green, id = "years" })
     local vx = sx + px(190)
@@ -856,10 +890,9 @@ function P.drawEditor(state, area)
     UI.button(state, area.x + area.w - px(20) - bw, area.y + py(8), bw, py(44), string.upper(t("crp_savePlan")), {
         bg = C.green, fg = C.dark, bold = true,
         onClick = function()
-            CropRotationPlanData.putPlan(data(), plan)
+            request({ type = OP.PUT_PLAN, plan = CropRotationPlanData.copyPlan(plan) })
             state.selectedPlanId = plan.id
             state.editor = nil
-            save()
         end,
     })
     UI.button(state, area.x + area.w - px(32) - 2 * bw, area.y + py(8), bw, py(44), string.upper(t("crp_cancel")), {
@@ -917,6 +950,19 @@ function P.drawGroups(state, area)
     local panelW = px(300)
     local listW = area.w - panelW - px(28)
     local x = area.x
+    if CropRotationPlan:isSpectator() then
+        UI.paragraph(x, top - py(10), area.w * 0.6, py(16), t("crp_spectator"), C.muted)
+        return
+    end
+    -- Put a field group this player just made into "add fields" mode, once the server has sent it
+    if state.waitForGroup ~= nil then
+        for _, g in ipairs(d.groups) do
+            if g.id >= state.waitForGroup then
+                state.addTo = g.id
+                state.waitForGroup = nil
+            end
+        end
+    end
 
     -- Columns
     local colGap = px(14)
@@ -966,8 +1012,7 @@ function P.drawGroups(state, area)
             UI.button(state, cx, chipY, cw, chipH, label, {
                 id = "chip:" .. label, bg = C.chip, bold = true, tooltip = tf("crp_removeFieldTip", id),
                 onClick = function()
-                    CropRotationPlanData.removeField(d, id)
-                    save()
+                    request({ type = OP.ASSIGN_FIELD, groupId = 0, fieldId = id })
                 end,
             })
             cx = cx + cw + px(6)
@@ -978,15 +1023,15 @@ function P.drawGroups(state, area)
             UI.hit(state, cx, chipY, px(30), chipH, nil, fieldsTextOf(group))
             cx = cx + px(34)
         end
-        local adding = state.addTo == i
+        local adding = state.addTo == group.id
         UI.button(state, cx, chipY, px(34), chipH, "+", {
             id = "addField:" .. tostring(i), dashed = not adding, ring = C.lineLight, bg = adding and C.green or nil,
             fg = adding and C.dark or C.green, bold = true, tooltip = t("crp_addFieldTip"),
             onClick = function()
-                if state.addTo == i then
+                if state.addTo == group.id then
                     state.addTo = nil
                 else
-                    state.addTo = i
+                    state.addTo = group.id
                 end
             end,
         })
@@ -1003,11 +1048,7 @@ function P.drawGroups(state, area)
             end
         end
         local function setPlan(k)
-            local id = planIds[k]
-            group.planId = id or nil
-            group.planYear = 1
-            group.anchorYear = calendarYear
-            save()
+            requestGroupChange(group, planIds[k] or nil, 1)
         end
         local stepH = py(38)
         local stepY = ry + (rowH - stepH) * 0.5
@@ -1023,9 +1064,7 @@ function P.drawGroups(state, area)
         if plan ~= nil then
             local planYear = LG.getPlanYear(group, calendarYear, plan.years)
             local function setYear(y)
-                group.planYear = y
-                group.anchorYear = calendarYear
-                save()
+                requestGroupChange(group, group.planId, y)
             end
             UI.stepper(state, xYear, stepY, yearW, stepH, tf("crp_yearN", planYear),
                 plan.years > 1 and function()
@@ -1042,18 +1081,17 @@ function P.drawGroups(state, area)
         end
 
         -- Remove group (click twice)
-        local confirming = state.confirmGroup == i
+        local confirming = state.confirmGroup == group.id
         UI.button(state, xDel, stepY, delW, stepH, confirming and "?" or "X", {
             id = "delGroup:" .. tostring(i), ring = C.danger, fg = C.dangerFg, bold = true, bg = confirming and C.warnBg or nil,
             tooltip = t(confirming and "crp_removeGroupConfirm" or "crp_removeGroupTip"),
             onClick = function()
                 if confirming then
-                    CropRotationPlanData.removeGroup(d, i)
+                    request({ type = OP.DELETE_GROUP, id = group.id })
                     state.confirmGroup = nil
                     state.addTo = nil
-                    save()
                 else
-                    state.confirmGroup = i
+                    state.confirmGroup = group.id
                 end
             end,
         })
@@ -1069,10 +1107,9 @@ function P.drawGroups(state, area)
     UI.button(state, x, area.y + py(10), px(260), py(44), string.upper(t("crp_newGroup")), {
         dashed = true, ring = C.lineLight, fg = C.green, bold = true,
         onClick = function()
-            CropRotationPlanData.addGroup(d, calendarYear)
-            state.addTo = #d.groups
-            state.groupScroll = math.max(0, #d.groups - maxRows)
-            save()
+            state.waitForGroup = d.nextGroupId
+            state.groupScroll = math.max(0, #d.groups + 1 - maxRows)
+            request({ type = OP.NEW_GROUP })
         end,
     })
 
@@ -1083,7 +1120,7 @@ function P.drawGroups(state, area)
     local cw = panelW - px(26)
     local y = top - py(20)
     UI.text(cx, y, py(16), string.upper(t("crp_yourFields")), C.text, "left", true)
-    local addGroup = state.addTo ~= nil and d.groups[state.addTo] or nil
+    local addGroup = state.addTo ~= nil and CropRotationPlanData.getGroup(d, state.addTo) or nil
     if addGroup ~= nil then
         y = UI.paragraph(cx, y - py(6), cw, py(13), t("crp_addFieldHint"), C.green)
     else
@@ -1116,12 +1153,7 @@ function P.drawGroups(state, area)
             id = "field:" .. tostring(id), bg = bg, fg = fg, bold = true, ring = isInAddGroup and C.green or nil,
             tooltip = t(inGroup ~= nil and "crp_fieldInGroup" or "crp_fieldFree"),
             onClick = addGroup ~= nil and function()
-                if isInAddGroup then
-                    CropRotationPlanData.removeField(d, id)
-                else
-                    CropRotationPlanData.addFieldToGroup(d, addGroup, id)
-                end
-                save()
+                request({ type = OP.ASSIGN_FIELD, groupId = isInAddGroup and 0 or addGroup.id, fieldId = id })
             end or nil,
         })
         shownFields = shownFields + 1

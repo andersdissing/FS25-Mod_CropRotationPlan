@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="105">
     <author>Anders Dissing</author>
-    <version>2.0.0.0</version>
+    <version>2.1.0.0</version>
     <title>
         <en>Crop Rotation Plan</en>
         <da>Sædskifteplan</da>
@@ -14,7 +14,8 @@ Menu (Esc) > Crop rotation plan:
 - Field groups: put your fields into groups, pick a plan and where the group is in the plan this year. It moves on by itself every year.
 - Settings: display full / minimized / hidden, position top / left, grass in rotation.
 
-Crops are read from the game (map, DLC and mod crops). Everything is saved in the savegame; a new savegame starts empty.
+Crops are read from the game (map, DLC and mod crops). Plans are saved in the savegame; a new savegame starts empty.
+Multiplayer: each farm has its own plans and field groups, and everyone on the farm can edit them.
 Alt+R: switch between full and minimized.
 Console: crpLoadExample (Riverbend Springs example plan), crpReloadCrops]]></en>
         <da><![CDATA[Planlæg dit sædskifte i spillet og se på skærmen, hvad der skal sås og høstes i denne måned.
@@ -24,12 +25,13 @@ Menu (Esc) > Sædskifteplan:
 - Markgrupper: saml dine marker i grupper, vælg en plan og hvor gruppen er i planen i år. Den rykker selv videre hvert år.
 - Indstillinger: visning fuld / minimeret / skjult, placering top / venstre, græs i sædskiftet.
 
-Afgrøderne læses fra spillet (kort, DLC og mod-afgrøder). Alt gemmes i savegamet; et nyt savegame starter tomt.
+Afgrøderne læses fra spillet (kort, DLC og mod-afgrøder). Planerne gemmes i savegamet; et nyt savegame starter tomt.
+Multiplayer: hver gård har sine egne planer og markgrupper, og alle på gården kan redigere dem.
 Alt+R: skift mellem fuld og minimeret.
 Konsol: crpLoadExample (eksempelplan for Riverbend Springs), crpReloadCrops]]></da>
     </description>
     <iconFilename>icon_CropRotationPlan.dds</iconFilename>
-    <multiplayer supported="false"/>
+    <multiplayer supported="true"/>
 
     <extraSourceFiles>
         <sourceFile filename="scripts/CropRotationPlan.lua"/>
@@ -74,15 +76,16 @@ Konsol: crpLoadExample (eksempelplan for Riverbend Springs), crpReloadCrops]]></
         <text name="crp_settings_display"><en>Display</en><da>Visning</da></text>
         <text name="crp_settings_display_tooltip"><en>Full shows every field group. Minimized shows one icon: yellow = work this month (with number of fields), green = work next month, grey = nothing to do. Where each field group is in its plan is set under Field groups.</en><da>Fuld viser alle markgrupper. Minimeret viser ét ikon: gult = opgaver denne måned (med antal marker), grønt = opgaver næste måned, gråt = intet at gøre. Hvor hver markgruppe er i sin plan sættes under Markgrupper.</da></text>
         <text name="crp_settings_position"><en>Position</en><da>Placering</da></text>
-        <text name="crp_settings_position_tooltip"><en>Where the crop rotation plan is shown: at the top of the screen or on the left side.</en><da>Hvor sædskifteplanen vises: øverst på skærmen eller i venstre side.</da></text>
+        <text name="crp_settings_position_tooltip"><en>Where the crop rotation plan is shown: at the top of the screen or on the left side. Display and position are your own and saved on your PC.</en><da>Hvor sædskifteplanen vises: øverst på skærmen eller i venstre side. Visning og placering er dine egne og gemmes på din pc.</da></text>
         <text name="crp_settings_key"><en>Show / minimize key</en><da>Tast for vis / minimér</da></text>
         <text name="crp_settings_key_value"><en>Alt + R (change in Settings &gt; Controls)</en><da>Alt + R (ændres i Indstillinger &gt; Styring)</da></text>
         <text name="crp_settings_key_tooltip"><en>Switches the on-screen plan between full and minimized.</en><da>Skifter planen på skærmen mellem fuld og minimeret.</da></text>
         <text name="crp_settings_grass"><en>Grass in rotation</en><da>Græs i sædskiftet</da></text>
-        <text name="crp_settings_grass_tooltip"><en>When on, grass can be added to a plan as a ley: you choose how long it stays and how often it is cut.</en><da>Når slået til kan græs lægges ind i en plan som græsmark: du vælger hvor længe den ligger og hvor tit der slås.</da></text>
+        <text name="crp_settings_grass_tooltip"><en>When on, grass can be added to a plan as a ley: you choose how long it stays and how often it is cut. Applies to everyone on your farm.</en><da>Når slået til kan græs lægges ind i en plan som græsmark: du vælger hvor længe den ligger og hvor tit der slås. Gælder alle på din gård.</da></text>
         <text name="crp_settings_edit"><en>Who can edit the plan</en><da>Hvem kan redigere planen</da></text>
         <text name="crp_settings_edit_value"><en>Everyone on the farm</en><da>Alle på gården</da></text>
-        <text name="crp_settings_edit_tooltip"><en>Multiplayer is not supported yet. When it is, everyone on the farm can edit the plans.</en><da>Multiplayer understøttes ikke endnu. Når det gør, kan alle på gården redigere planerne.</da></text>
+        <text name="crp_settings_edit_tooltip"><en>Each farm has its own plans and field groups. Everyone on the farm can edit them; the server checks every change and shares it with all players.</en><da>Hver gård har sine egne planer og markgrupper. Alle på gården kan redigere dem; serveren tjekker hver ændring og deler den med alle spillere.</da></text>
+        <text name="crp_spectator"><en>Join a farm to see and edit its crop rotation plans.</en><da>Gå med i en gård for at se og redigere dens sædskifteplaner.</da></text>
         <text name="crp_on"><en>On</en><da>Til</da></text>
         <text name="crp_off"><en>Off</en><da>Fra</da></text>
         <text name="crp_position_top"><en>Top</en><da>Top</da></text>
