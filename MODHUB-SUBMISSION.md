@@ -64,8 +64,7 @@ Alt+R : basculer entre complet et réduit.
 Console : crpLoadExample (plan d'exemple pour Riverbend Springs), crpReloadCrops
 ```
 
-Note: the French menu texts in the game itself are English (the mod ships EN, DE, DA texts); only the title and
-description are French.
+The mod's in-game texts are in English, German, Danish and French (`Build/translations`).
 
 ## Files (further down the form)
 
@@ -86,5 +85,5 @@ Quick test: load any savegame (Riverbend Springs gives the right field numbers),
 
 Multiplayer: plans and field groups are per farm and stored by the server in the savegame (cropRotationPlan.xml). By default only the farm manager can edit; the farm manager can allow everyone on the farm (Settings > Multiplayer). Players without the right see the plans read-only. Edits are sent to the server, which checks them (permission, plan rules, field ownership) and broadcasts the result; joining players receive the current state.
 
-No dependencies. Languages: English, German, Danish (title and description also French).
+No dependencies. Languages: English, German, French, Danish.
 ```

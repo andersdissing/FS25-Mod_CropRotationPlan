@@ -12,7 +12,7 @@ every month, what to sow and harvest on which fields.
 - Crops are **read from the game**: base game, DLC and mod crops on the map you play.
 - **Multiplayer**: every farm has its own plans; the farm manager decides who may edit them.
 - Everything is stored in the **savegame**. A new savegame starts empty.
-- English and Danish.
+- English, German, French and Danish.
 
 ---
 
@@ -164,7 +164,7 @@ Build/          the mod as it ships (zip the contents, not the folder)
   scripts/CropRotationPlanPages.lua   Plans, plan editor and Field groups pages
   scripts/CropRotationPlanFrame.lua   the Esc menu tab
   gui/CropRotationPlanFrame.xml       tab layout (header, sub-tabs, Settings rows)
-  translations/l10n_en.xml, _de.xml, _da.xml   all texts, one file per language
+  translations/l10n_en.xml, _de.xml, _da.xml, _fr.xml   all texts, one file per language
 Docs/           screenshots (see image-task.md), PUBLISHING.md (ModHub checklist), v1.1/ (old v1.1 copy, reference only)
 tests/          check_static.py, test_logic.py, smoke_test.py
 tools/          deploy.ps1 (local test), release.ps1 (GitHub release)

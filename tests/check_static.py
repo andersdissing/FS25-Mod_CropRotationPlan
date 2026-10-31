@@ -40,7 +40,7 @@ PREFIXES = ("crp_month_", "crp_action_", "crp_display_", "crp_position_")
 # ModHub: every UI text needs at least EN and DE (guideline 8.2); we also ship DA.
 # Texts are in <prefix>_<lang>.xml (modDesc <l10n filenamePrefix>); every file has the same keys.
 # Texts must start with a capital letter (guideline 5.5); a placeholder or "+"/"\"" start is fine.
-LANGUAGES = ("en", "de", "da")
+LANGUAGES = ("en", "de", "da", "fr")
 l10n = desc.find("l10n")
 prefix = l10n.get("filenamePrefix") if l10n is not None else None
 if prefix is None:
@@ -57,7 +57,7 @@ for lang in LANGUAGES:
 texts = tables["en"]
 
 placeholder = re.compile(r"%[ds]")
-for lang in ("de", "da"):
+for lang in LANGUAGES[1:]:
     for name in sorted(set(texts) - set(tables[lang])):
         fail("MISSING", lang, "for l10n", name)
     for name in sorted(set(tables[lang]) - set(texts)):
@@ -80,7 +80,7 @@ for name, en in texts.items():
 # The ModHub upload form also needs French title and description
 for part in ("title", "description"):
     element = desc.find(part)
-    for lang in LANGUAGES + ("fr",):
+    for lang in LANGUAGES:
         if element is None or element.find(lang) is None or not (element.find(lang).text or "").strip():
             fail("MISSING", lang, "in modDesc", part)
     if element is not None and element.find("de") is not None and element.find("en") is not None \
