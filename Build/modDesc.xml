@@ -5,6 +5,7 @@
     <title>
         <en>Crop Rotation Plan</en>
         <de>Fruchtfolgeplan</de>
+        <fr>Plan de rotation des cultures</fr>
         <da>Sædskifteplan</da>
     </title>
     <description>
@@ -30,6 +31,17 @@ Die Feldfrüchte werden aus dem Spiel gelesen (Karte, DLC und Mod-Früchte). Die
 Mehrspieler: Jeder Hof hat eigene Pläne und Feldgruppen. Standardmäßig bearbeitet nur der Hofverwalter sie; er kann es allen auf dem Hof erlauben.
 Alt+R: zwischen voll und minimiert umschalten.
 Konsole: crpLoadExample (Beispielplan für Riverbend Springs), crpReloadCrops]]></de>
+        <fr><![CDATA[Planifiez votre rotation des cultures dans le jeu et voyez à l'écran ce qu'il faut semer et récolter ce mois-ci.
+
+Menu (Échap) > Plan de rotation des cultures :
+- Plans : construisez un plan année par année sur une roue annuelle (janvier à décembre). Seules les cultures qui peuvent pousser dans un créneau libre sont proposées ; vous choisissez le mois de semis, le mois de récolte découle du temps de croissance. L'herbe peut rester en prairie temporaire avec un intervalle de fauche.
+- Groupes de champs : regroupez vos champs, choisissez un plan et l'année du plan où se trouve le groupe cette année. Elle avance d'elle-même chaque année.
+- Paramètres : affichage complet / réduit / masqué, position en haut / à gauche, herbe dans la rotation.
+
+Les cultures sont lues dans le jeu (carte, DLC et cultures de mods). Les plans sont enregistrés dans la sauvegarde ; une nouvelle sauvegarde commence vide.
+Multijoueur : chaque ferme a ses propres plans et groupes de champs. Le gestionnaire de la ferme les modifie, ou autorise tous les membres de la ferme à les modifier.
+Alt+R : basculer entre complet et réduit.
+Console : crpLoadExample (plan d'exemple pour Riverbend Springs), crpReloadCrops]]></fr>
         <da><![CDATA[Planlæg dit sædskifte i spillet og se på skærmen, hvad der skal sås og høstes i denne måned.
 
 Menu (Esc) > Sædskifteplan:

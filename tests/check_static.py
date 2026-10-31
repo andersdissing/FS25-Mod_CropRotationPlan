@@ -77,9 +77,10 @@ for name, en in texts.items():
         if first.isalpha() and first != first.upper():
             fail("LOWER-CASE START", lang, name, value[:40])
 
+# The ModHub upload form also needs French title and description
 for part in ("title", "description"):
     element = desc.find(part)
-    for lang in LANGUAGES:
+    for lang in LANGUAGES + ("fr",):
         if element is None or element.find(lang) is None or not (element.find(lang).text or "").strip():
             fail("MISSING", lang, "in modDesc", part)
     if element is not None and element.find("de") is not None and element.find("en") is not None \
