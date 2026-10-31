@@ -329,7 +329,7 @@ local function drawColumns(state, plan, crops, x, y, w, h)
             local crop = crops[seed.crop] or CropRotationPlanCrops.get(seed.crop)
             local line1, line2 = cardLines(seed, crop, yr, n)
             UI.button(state, cx + px(10), cy, cw - px(20), cardH, nil, {
-                id = "card:" .. seed.crop .. ":" .. tostring(yr), edit = true, bg = C.card,
+                id = "card:" .. seed.crop .. ":" .. tostring(yr), edit = "show", bg = C.card,
                 onClick = function()
                     P.openEditor(state, plan, { type = "seed", i = seed.i })
                 end,
@@ -451,7 +451,7 @@ function P.drawPlans(state, area)
     local hy = top - py(62)
     UI.label(rx, top - py(14), t("crp_planName"))
     UI.button(state, rx, hy, px(320), py(40), plan.name, {
-        edit = true, bg = C.panelDark, ring = C.lineLight, align = "left", size = py(16), tooltip = t("crp_renameTip"),
+        edit = "show", bg = C.panelDark, ring = C.lineLight, align = "left", size = py(16), tooltip = t("crp_renameTip"),
         onClick = function()
             showTextInput(t("crp_planName"), plan.name, function(text)
                 requestPlanChange(plan, function(copy)
@@ -910,7 +910,10 @@ function P.drawEditor(state, area)
     UI.button(state, area.x + area.w - px(20) - bw, area.y + py(8), bw, py(44), string.upper(t("crp_savePlan")), {
         bg = C.green, fg = C.dark, bold = true,
         onClick = function()
-            request({ type = OP.PUT_PLAN, plan = CropRotationPlanData.copyPlan(plan) })
+            -- The edit right is checked here, in request() and again by the server
+            if CropRotationPlan:canEdit() then
+                request({ type = OP.PUT_PLAN, plan = CropRotationPlanData.copyPlan(plan) })
+            end
             state.selectedPlanId = plan.id
             state.editor = nil
         end,
@@ -1032,7 +1035,7 @@ function P.drawGroups(state, area)
                 break
             end
             UI.button(state, cx, chipY, cw, chipH, label, {
-                id = "chip:" .. label, edit = true, bg = C.chip, bold = true, tooltip = tf("crp_removeFieldTip", id),
+                id = "chip:" .. label, edit = "show", bg = C.chip, bold = true, tooltip = tf("crp_removeFieldTip", id),
                 onClick = function()
                     request({ type = OP.ASSIGN_FIELD, groupId = 0, fieldId = id })
                 end,

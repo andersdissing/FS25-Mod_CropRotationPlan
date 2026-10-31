@@ -211,12 +211,18 @@ function UI.paragraph(x, topY, maxWidth, size, text, c)
 end
 
 -- Button: opts = { bg, fg, ring, dashed, size, bold, align, disabled, onClick, tooltip, selected, id, edit }
--- edit = true: the button changes the plans; it is disabled while state.readOnly (no edit rights)
+-- Without edit rights (state.readOnly):
+--   edit = true    the button only changes the plans: it is not drawn at all
+--   edit = "show"  the button also shows plan content (plan name, crop card, field number):
+--                  it is drawn as usual but cannot be clicked
 function UI.button(state, x, y, w, h, label, opts)
     opts = opts or {}
     if opts.edit and state.readOnly then
-        opts.disabled = true
-        opts.tooltip = state.readOnlyText or opts.tooltip
+        if opts.edit ~= "show" then
+            return false
+        end
+        opts.onClick = nil
+        opts.tooltip = nil
     end
     local bg = opts.bg
     if opts.selected and opts.selectedBg ~= nil then
@@ -257,17 +263,18 @@ function UI.button(state, x, y, w, h, label, opts)
 end
 
 -- "<  value  >" stepper. onPrev / onNext nil = that arrow is disabled.
+-- opts.edit and no edit rights: only the value is shown, without arrows.
 function UI.stepper(state, x, y, w, h, value, onPrev, onNext, opts)
     opts = opts or {}
-    if opts.edit and state.readOnly then
-        onPrev, onNext = nil, nil
-    end
+    local arrows = not (opts.edit and state.readOnly)
     UI.rect(x, y, w, h, UI.C.panelDark)
-    UI.border(x, y, w, h, opts.ring or UI.C.lineLight)
+    UI.border(x, y, w, h, arrows and (opts.ring or UI.C.lineLight) or UI.C.line)
     local aw = UI.px(36)
     local id = opts.id or "stepper"
-    UI.button(state, x, y, aw, h, "<", { fg = UI.C.green, bold = true, disabled = onPrev == nil, onClick = onPrev, size = UI.py(16), id = id .. ":prev" })
-    UI.button(state, x + w - aw, y, aw, h, ">", { fg = UI.C.green, bold = true, disabled = onNext == nil, onClick = onNext, size = UI.py(16), id = id .. ":next" })
+    if arrows then
+        UI.button(state, x, y, aw, h, "<", { fg = UI.C.green, bold = true, disabled = onPrev == nil, onClick = onPrev, size = UI.py(16), id = id .. ":prev" })
+        UI.button(state, x + w - aw, y, aw, h, ">", { fg = UI.C.green, bold = true, disabled = onNext == nil, onClick = onNext, size = UI.py(16), id = id .. ":next" })
+    end
     local size = opts.size or UI.py(14)
     UI.textIn(x + w * 0.5, y, h, size, UI.fit(value, size, w - 2 * aw, true), UI.C.text, "center", true)
 end
