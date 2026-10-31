@@ -1,7 +1,7 @@
 # ModHub submission sheet
 
 Copy-paste values for the upload form on modhub.giants-software.com (GIANTS account). In the order of the form.
-Checklist and rules: `PUBLISHING.md`.
+Checklist and rules: `Docs/PUBLISHING.md`.
 
 ## Meta Data
 
